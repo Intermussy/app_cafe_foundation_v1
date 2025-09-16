@@ -22,6 +22,7 @@ class InternetCubit extends Cubit<InternetState> {
       final isOffline =
           connectivityResult.isEmpty ||
           connectivityResult.every((r) => r == ConnectivityResult.none);
+      
       if (hasWifi) {
         emitInternetConnected(ConnectionType.wifi);
       } else if (hasMobile) {
