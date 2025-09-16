@@ -88,31 +88,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+
             SizedBox(height: 24),
-            MaterialButton(
-              color: Colors.redAccent,
-              child: Text(
-                'Go to Second Screen',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/second');
-              },
-            ),
+            goToStoreButton(context),
             SizedBox(height: 24),
-            MaterialButton(
-              color: Colors.greenAccent,
-              child: Text(
-                'Go to Third Screen',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/third');
-              },
-            ),
+            goToProfileButton(context),
+            SizedBox(height: 24),
+            goToCartButton(context),
+            SizedBox(height: 24),
           ],
         ),
       ),
+    );
+  }
+
+  MaterialButton goToStoreButton(BuildContext context) {
+    return MaterialButton(
+      color: Colors.red,
+      child: Text('Go to Store', style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/storemenu');
+      },
+    );
+  }
+
+  MaterialButton goToProfileButton(BuildContext context) {
+    return MaterialButton(
+      color: Colors.blue,
+      child: Text('Go to Profile', style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/profile');
+      },
+    );
+  }
+
+  MaterialButton goToCartButton(BuildContext context) {
+    return MaterialButton(
+      color: Colors.green,
+      child: Text('Go to Cart', style: TextStyle(color: Colors.black)),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/shoppingcart');
+      },
     );
   }
 }
