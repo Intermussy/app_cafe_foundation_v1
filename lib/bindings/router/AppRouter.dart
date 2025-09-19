@@ -1,5 +1,7 @@
 import 'package:app_foundation/features/profile/views/profile_page.dart';
 import 'package:app_foundation/features/store_menu/views/cart_list_page.dart';
+import 'package:app_foundation/features/store_menu/views/drink_detail_page.dart';
+import 'package:app_foundation/features/store_menu/views/order_receipt_page.dart';
 import 'package:app_foundation/features/store_menu/views/store_main_page.dart';
 import 'package:app_foundation/presentation/screens/home_screen.dart';
 import 'package:app_foundation/presentation/screens/secondscreen.dart';
@@ -30,6 +32,10 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => ProfilePage());
       case '/shoppingcart':
         return MaterialPageRoute(builder: (_) => CartListPage());
+      case '/drinkdetail':
+        return MaterialPageRoute(builder: (_) => DrinkDetailPage());
+      case '/orderreceipt':
+        return MaterialPageRoute(builder: (_) => OrderReceiptPage());
 
       default:
         return null;

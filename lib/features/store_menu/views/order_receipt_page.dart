@@ -1,0 +1,121 @@
+import 'package:app_foundation/features/store_menu/models/cart_item_view.dart';
+import 'package:app_foundation/features/store_menu/views/receipt_item_widget.dart';
+import 'package:app_foundation/features/store_menu/views/total_price_label.dart';
+import 'package:flutter/material.dart';
+
+class OrderReceiptPage extends StatelessWidget {
+  const OrderReceiptPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue[200],
+      bottomNavigationBar: orderReceiptBottomNav(context),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Order Receipt',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 2,
+                          spreadRadius: 0.2,
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Flexible(
+                            child: ListView.builder(
+                              padding: const EdgeInsets.all(8),
+                              itemCount: 3,
+                              itemBuilder: (context, index) {
+                                return ReceiptItemWidget(
+                                  item: CartItemView.getMockData(),
+                                );
+                              },
+                            ),
+                          ),
+
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TotalPriceLabel(total: 30000),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 48),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container orderReceiptBottomNav(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 6,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                ),
+                child: Text('Cancel'),
+              ),
+              OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                child: Text('Confirm'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

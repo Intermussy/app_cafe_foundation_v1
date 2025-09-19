@@ -21,80 +21,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('You have pushed the button this many times:'),
-            BlocConsumer<CounterCubit, CounterState>(
-              listener: (context, state) {
-                if (state.wasIncremented == true) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Incremented!'),
-                      duration: Duration(milliseconds: 300),
-                    ),
-                  );
-                } else if (state.wasIncremented == false) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Decremented!'),
-                      duration: Duration(milliseconds: 300),
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                if (state.counterValue < 0) {
-                  return Text(
-                    'BRR, NEGATIVE ${state.counterValue}',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                } else if (state.counterValue % 2 == 0) {
-                  return Text(
-                    'YAAAY ${state.counterValue}',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                } else if (state.counterValue == 5) {
-                  return Text(
-                    'HMM, NUMBER 5',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                } else {
-                  return Text(
-                    state.counterValue.toString(),
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                }
-              },
-            ),
-            SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                FloatingActionButton(
-                  heroTag: Text(widget.title),
-                  onPressed: () {
-                    BlocProvider.of<CounterCubit>(context).decrement();
-                    // context.bloc<CounterCubit>().decrement();
-                  },
-                  tooltip: 'Decrement',
-                  child: Icon(Icons.remove),
-                ),
-                FloatingActionButton(
-                  heroTag: Text('${widget.title} 2nd'),
-                  onPressed: () {
-                    // BlocProvider.of<CounterCubit>(context).increment();
-                    BlocProvider.of<CounterCubit>(context).increment();
-                  },
-                  tooltip: 'Increment',
-                  child: Icon(Icons.add),
-                ),
-              ],
-            ),
-
             SizedBox(height: 24),
             goToStoreButton(context),
             SizedBox(height: 24),
             goToProfileButton(context),
             SizedBox(height: 24),
             goToCartButton(context),
+            SizedBox(height: 24),
+            goToDrinkDetailButton(context),
+            SizedBox(height: 24),
+            goToOrderReceiptButton(context),
             SizedBox(height: 24),
           ],
         ),
@@ -125,9 +61,29 @@ class _MyHomePageState extends State<MyHomePage> {
   MaterialButton goToCartButton(BuildContext context) {
     return MaterialButton(
       color: Colors.green,
-      child: Text('Go to Cart', style: TextStyle(color: Colors.black)),
+      child: Text('Go to Cart', style: TextStyle(color: Colors.white)),
       onPressed: () {
         Navigator.of(context).pushNamed('/shoppingcart');
+      },
+    );
+  }
+
+  MaterialButton goToDrinkDetailButton(BuildContext context) {
+    return MaterialButton(
+      color: Colors.orange,
+      child: Text('Go to Drink Detail', style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/drinkdetail');
+      },
+    );
+  }
+
+  MaterialButton goToOrderReceiptButton(BuildContext context) {
+    return MaterialButton(
+      color: Colors.orange,
+      child: Text('Go to Order Receipt', style: TextStyle(color: Colors.white)),
+      onPressed: () {
+        Navigator.of(context).pushNamed('/orderreceipt');
       },
     );
   }
