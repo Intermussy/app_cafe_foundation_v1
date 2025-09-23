@@ -27,7 +27,7 @@ class AppRouter {
               ThirdScreen(title: "Thirst Screen", color: Colors.greenAccent),
         );
       case '/storemenu':
-        return MaterialPageRoute(builder: (_) => StoreMainMenu(title: 'menu'));
+        return MaterialPageRoute(builder: (_) => StoreMainMenu());
       case '/profile':
         return MaterialPageRoute(builder: (_) => ProfilePage());
       case '/shoppingcart':
