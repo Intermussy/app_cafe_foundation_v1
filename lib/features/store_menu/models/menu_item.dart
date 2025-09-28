@@ -35,4 +35,36 @@ class DrinkMenuView {
       type: type ?? this.type,
     );
   }
+
+  static List<DrinkMenuView> getMockList() {
+    return [
+      DrinkMenuView(
+        name: 'Cappucino',
+        price: 20000,
+        iceAvailable: true,
+        hotAvailable: true,
+        regularSizeAvailable: true,
+        largeSizeAvailable: true,
+        type: 'Coffee',
+      ),
+      DrinkMenuView(
+        name: 'Pistachio',
+        price: 32000,
+        iceAvailable: true,
+        hotAvailable: true,
+        regularSizeAvailable: true,
+        largeSizeAvailable: false,
+        type: 'Coffee',
+      ),
+      DrinkMenuView(
+        name: 'Vanilla Frappe',
+        price: 24000,
+        iceAvailable: true,
+        hotAvailable: false,
+        regularSizeAvailable: true,
+        largeSizeAvailable: false,
+        type: 'Non-coffee',
+      ),
+    ];
+  }
 }

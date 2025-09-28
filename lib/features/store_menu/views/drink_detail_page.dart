@@ -1,5 +1,8 @@
+import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping_list.dart';
 import 'package:app_foundation/features/store_menu/views/price_confirmation_widget.dart';
+import 'package:app_foundation/features/store_menu/views/syrup_selection_widget.dart';
+import 'package:app_foundation/features/store_menu/views/topping_selection_widget.dart';
 import 'package:flutter/material.dart';
 
 class DrinkDetailPage extends StatefulWidget {
@@ -14,8 +17,8 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
   List<String> sugarLevel = ["Normal", "Less", "None"];
   List<String> iceLevel = ["Normal", "Less", "None"];
   List<String> tempLevel = ["Hot", "Cold"];
-  List<Topping> listTopping = Topping.getMockList();
-
+  List<Topping>? _selectedTopping;
+  List<Syrup>? _selectedSyrup;
   List<int> totalPrice = [];
   int? _selectedSugar;
 
@@ -33,19 +36,33 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
             expandedHeight: 400,
             pinned: true,
             backgroundColor: Colors.amber,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                'Americano',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: Colors.white),
-              ),
-              centerTitle: false,
-              collapseMode: CollapseMode.parallax,
-              background: Image.asset(
-                "assets/images/placeholder.png",
-                fit: BoxFit.cover,
-              ),
+            flexibleSpace: LayoutBuilder(
+              builder: (context, constraints) {
+                // SliverAppBar expanded range
+                final double maxHeight = constraints.biggest.height;
+                // Threshold: when collapsed height is reached, we remove the shadow
+                final bool isCollapsed =
+                    maxHeight <=
+                    kToolbarHeight + MediaQuery.of(context).padding.top + 10;
+
+                return FlexibleSpaceBar(
+                  title: Text(
+                    'Americano',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      shadows: isCollapsed
+                          ? []
+                          : [Shadow(blurRadius: 4, color: Colors.black)],
+                      color: isCollapsed ? Colors.black : Colors.white,
+                    ),
+                  ),
+                  centerTitle: false,
+                  collapseMode: CollapseMode.parallax,
+                  background: Image.asset(
+                    "assets/images/placeholder.png",
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
             ),
           ),
 
@@ -85,6 +102,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                               : Colors.grey[200],
                           border: Border.all(
                             color: isSelected ? Colors.red : Colors.grey,
+                            width: 2,
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -169,6 +187,51 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                 },
               ),
             ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Topping',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  Text(
+                    '(max 2)',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8.0),
+            sliver: ToppingSelectionWidget(toppings: Topping.getMockList()),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Syrup', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    '(max 2)',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(8.0),
+            sliver: SyrupSelectionWidget(syrups: Syrup.getMockList()),
           ),
           SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],

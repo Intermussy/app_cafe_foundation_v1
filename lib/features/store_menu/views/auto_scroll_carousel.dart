@@ -19,6 +19,7 @@ class _AutoScrollCarouselState extends State<AutoScrollCarousel> {
     'assets/images/placeholder.png',
     'assets/images/placeholder.png',
   ];
+  double _progress = 0.0;
 
   @override
   void initState() {
@@ -29,16 +30,30 @@ class _AutoScrollCarouselState extends State<AutoScrollCarousel> {
 
   void _startAutoScroll() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_pageController.hasClients) {
-        setState(() {
-          _currentPage = (_currentPage + 1) % _images.length;
-        });
-        _pageController.animateToPage(
-          _currentPage,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeInOut,
+    const duration = Duration(milliseconds: 50);
+    const totalTime = 5000; // 5 seconds
+    int tick = 0;
+    _timer = Timer.periodic(duration, (timer) {
+      tick++;
+
+      setState(() {
+        _progress = (tick * duration.inMilliseconds / totalTime).clamp(
+          0.0,
+          1.0,
         );
+      });
+      if (_progress >= 1.0) {
+        tick = 0;
+        if (_pageController.hasClients) {
+          setState(() {
+            _currentPage = (_currentPage + 1) % _images.length;
+          });
+          _pageController.animateToPage(
+            _currentPage,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+          );
+        }
       }
     });
   }
@@ -46,13 +61,6 @@ class _AutoScrollCarouselState extends State<AutoScrollCarousel> {
   void _pauseAutoScroll() {
     _timer?.cancel();
     _timer = null;
-  }
-
-  void _restartAutoScroll() {
-    _timer?.cancel();
-    _timer = Timer(const Duration(seconds: 5), () {
-      _startAutoScroll();
-    });
   }
 
   void _goToPage(int newPage) {
@@ -66,8 +74,7 @@ class _AutoScrollCarouselState extends State<AutoScrollCarousel> {
       curve: Curves.easeInOut,
     );
 
-    // 🔥 restart auto-scroll after manual interaction
-    _restartAutoScroll();
+    _startAutoScroll();
   }
 
   @override
@@ -84,66 +91,77 @@ class _AutoScrollCarouselState extends State<AutoScrollCarousel> {
       children: [
         SizedBox(
           height: 180,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollStartNotification) {
-                _timer?.cancel();
-              } else if (notification is ScrollEndNotification) {
-                _restartAutoScroll();
-              }
-              return false;
-            },
-            child: Stack(
-              children: [
-                PageView.builder(
-                  itemCount: _images.length,
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    setState(() => _currentPage = index);
-                  },
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Image.asset(
-                        _images[index],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      ),
-                    );
-                  },
-                ),
-                Positioned.fill(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () => _goToPage(_currentPage - 1),
-                          onLongPress: _pauseAutoScroll,
-                          onLongPressUp: _startAutoScroll,
+          child: Stack(
+            children: [
+              PageView.builder(
+                itemCount: _images.length,
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                    _progress = 0.0;
+                  });
+                },
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          _images[index],
+                          fit: BoxFit.cover,
+                          width: double.infinity,
                         ),
+                        if (_currentPage == index)
+                          Positioned(
+                            bottom: 8,
+                            left: 8,
+                            right: 8,
+                            child: LinearProgressIndicator(
+                              value: _progress,
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.3,
+                              ),
+                              color: Colors.red,
+                              minHeight: 4,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              Positioned.fill(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () => _goToPage(_currentPage - 1),
+                        onLongPress: _pauseAutoScroll,
+                        onLongPressUp: _startAutoScroll,
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () => _goToPage(_currentPage + 1),
-                          onLongPress: _pauseAutoScroll,
-                          onLongPressUp: _startAutoScroll,
-                        ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () => _goToPage(_currentPage + 1),
+                        onLongPress: _pauseAutoScroll,
+                        onLongPressUp: _startAutoScroll,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8),

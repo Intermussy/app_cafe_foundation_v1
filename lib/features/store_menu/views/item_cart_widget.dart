@@ -25,8 +25,11 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(25),
-        child: InkWell(
-          onTap: () {},
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            Navigator.of(context).pushNamed('/drinkdetail');
+          },
           child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,

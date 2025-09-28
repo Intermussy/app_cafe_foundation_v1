@@ -1,4 +1,5 @@
 import 'package:app_foundation/features/store_menu/views/auto_scroll_carousel.dart';
+import 'package:app_foundation/features/store_menu/views/item_menu_widget.dart';
 import 'package:flutter/material.dart';
 
 class StoreMainMenu extends StatefulWidget {
@@ -47,7 +48,12 @@ class _StoreMainMenuState extends State<StoreMainMenu>
               ),
             ),
           ),
-          SliverToBoxAdapter(child: AutoScrollCarousel()),
+          SliverToBoxAdapter(
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: AutoScrollCarousel(),
+            ),
+          ),
           SliverPersistentHeader(
             delegate: _sliverTabBarDelegateTab(
               tabBar: TabBar(
@@ -62,31 +68,10 @@ class _StoreMainMenuState extends State<StoreMainMenu>
           SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: SliverGrid(
-              delegate: SliverChildBuilderDelegate(childCount: 10, (
-                context,
-                index,
-              ) {
-                return Card(
-                  color: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                        child: Image.asset(
-                          'assets/images/placeholder.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Text("Drink $index"),
-                    ],
-                  ),
-                );
-              }),
+              delegate: SliverChildBuilderDelegate(
+                childCount: 10,
+                (context, index) => ItemMenuWidget(index: index),
+              ),
 
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,

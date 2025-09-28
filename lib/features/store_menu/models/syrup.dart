@@ -3,11 +3,11 @@ class Syrup {
   final int price;
   Syrup({required this.name, required this.price});
 
-  List<Syrup> getMockSyrup() {
+  static List<Syrup> getMockList() {
     final listMockSyrup = [
-      Syrup(name: "Caramel", price: 6000),
-      Syrup(name: "Golder Boba", price: 6000),
-      Syrup(name: "Oreo", price: 6000),
+      Syrup(name: "Whipped Cream", price: 3000),
+      Syrup(name: "Vanilla Syrup", price: 3000),
+      Syrup(name: "Oreo", price: 3000),
     ];
     return listMockSyrup;
   }

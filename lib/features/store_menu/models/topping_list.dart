@@ -10,7 +10,7 @@ class Topping {
   static List<Topping> getMockList() {
     final listMockTopping = [
       Topping(name: "Caramel", price: 6000),
-      Topping(name: "Golder Boba", price: 6000),
+      Topping(name: "Golden Boba", price: 6000),
       Topping(name: "Oreo", price: 6000),
     ];
     return listMockTopping;

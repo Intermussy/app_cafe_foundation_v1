@@ -33,6 +33,43 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          OutlinedButton(
+            onPressed: () {
+              // TODO: decrease quantity
+            },
+            style: OutlinedButton.styleFrom(
+              shape: const CircleBorder(),
+              side: const BorderSide(color: Colors.red),
+              padding: const EdgeInsets.all(4),
+              visualDensity: VisualDensity.compact,
+              minimumSize: const Size(28, 28),
+            ),
+            child: const Icon(Icons.remove, color: Colors.red, size: 14),
+          ),
+
+          // quantity text
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              '1', // TODO: bind this to a state variable
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+
+          // plus button
+          OutlinedButton(
+            onPressed: () {
+              // TODO: increase quantity
+            },
+            style: OutlinedButton.styleFrom(
+              shape: const CircleBorder(),
+              side: const BorderSide(color: Colors.red),
+              padding: const EdgeInsets.all(4),
+              visualDensity: VisualDensity.compact,
+              minimumSize: const Size(28, 28),
+            ),
+            child: const Icon(Icons.add, color: Colors.red, size: 14),
+          ),
           ElevatedButton(
             onPressed: () {
               // handle add to cart
