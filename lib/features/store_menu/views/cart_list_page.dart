@@ -12,6 +12,33 @@ class _CartListPageState extends State<CartListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Container(
+        height: 75,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 6,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, '/orderreceipt');
+          },
+          child: Center(
+            child: Text(
+              'CONFIRM ORDER',
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
       appBar: AppBar(title: Text('Cart List')),
       body: SafeArea(
         child: Column(

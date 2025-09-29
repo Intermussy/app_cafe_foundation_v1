@@ -16,6 +16,24 @@ class PriceConfirmationWidget extends StatefulWidget {
 }
 
 class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
+  late int _quantity;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _quantity = widget.quantity;
+  }
+
+  @override
+  void didUpdateWidget(covariant PriceConfirmationWidget oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.quantity != widget.quantity) {
+      _quantity = widget.quantity;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,17 +60,17 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
               side: const BorderSide(color: Colors.red),
               padding: const EdgeInsets.all(4),
               visualDensity: VisualDensity.compact,
-              minimumSize: const Size(28, 28),
+              minimumSize: const Size(56, 56),
             ),
-            child: const Icon(Icons.remove, color: Colors.red, size: 14),
+            child: const Icon(Icons.remove, color: Colors.red, size: 28),
           ),
 
           // quantity text
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              '1', // TODO: bind this to a state variable
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              _quantity.toString(), // TODO: bind this to a state variable
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -66,9 +84,9 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
               side: const BorderSide(color: Colors.red),
               padding: const EdgeInsets.all(4),
               visualDensity: VisualDensity.compact,
-              minimumSize: const Size(28, 28),
+              minimumSize: const Size(56, 56),
             ),
-            child: const Icon(Icons.add, color: Colors.red, size: 14),
+            child: const Icon(Icons.add, color: Colors.red, size: 28),
           ),
           ElevatedButton(
             onPressed: () {

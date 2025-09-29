@@ -41,7 +41,9 @@ class _MyHomePageState extends State<MyHomePage> {
       color: Colors.red,
       child: Text('Go to Store', style: TextStyle(color: Colors.white)),
       onPressed: () {
-        Navigator.of(context).pushNamed('/storemenu');
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil('/storemenu', (route) => false);
       },
     );
   }
