@@ -30,6 +30,7 @@ class _StoreMainMenuState extends State<StoreMainMenu>
   void dispose() {
     // TODO: implement dispose
     tabController.dispose();
+    ftoast.removeCustomToast();
     super.dispose();
   }
 
@@ -77,11 +78,37 @@ class _StoreMainMenuState extends State<StoreMainMenu>
                     ),
                   ),
                   const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/shoppingcart');
-                    },
-                    icon: Icon(Icons.shop),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/shoppingcart');
+                        },
+                        icon: Icon(Icons.shop),
+                      ),
+                      Positioned(
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: BoxConstraints(
+                            minHeight: 16,
+                            minWidth: 16,
+                          ),
+                          child: Text(
+                            '1',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
