@@ -1,10 +1,10 @@
 import 'package:app_foundation/bindings/rupiah_formatter.dart';
-import 'package:app_foundation/features/store_menu/models/cart_item_view.dart';
+import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:flutter/material.dart';
 
 class ReceiptItemWidget extends StatefulWidget {
   const ReceiptItemWidget({super.key, required this.item});
-  final CartItemView item;
+  final DrinkCartModel item;
 
   @override
   State<ReceiptItemWidget> createState() => _ReceiptItemWidgetState();
@@ -22,12 +22,9 @@ class _ReceiptItemWidgetState extends State<ReceiptItemWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
-              children: [
-                Text(widget.item.name),
-                Text(widget.item.getAllToppingDesc()),
-              ],
+              children: [Text(widget.item.name), Text(widget.item.tempLevel)],
             ),
-            Text(RupiahFormatter.withRupiah(widget.item.getTotalPrice())),
+            Text(RupiahFormatter.withRupiah(widget.item.price)),
           ],
         ),
       ],

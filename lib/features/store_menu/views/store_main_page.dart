@@ -1,4 +1,5 @@
 import 'package:app_foundation/commons/widgets/custom_toast.dart';
+import 'package:app_foundation/features/store_menu/models/drink_catalog_model.dart';
 import 'package:app_foundation/features/store_menu/views/auto_scroll_carousel.dart';
 import 'package:app_foundation/features/store_menu/views/item_menu_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class StoreMainMenu extends StatefulWidget {
 
 class _StoreMainMenuState extends State<StoreMainMenu>
     with SingleTickerProviderStateMixin {
+  var mockDrinkMenuView = DrinkCatalogModel.getMockList();
   FToast ftoast = FToast();
   late TabController tabController;
   final List<String> tabs = ["All", "Coffee", "Non-coffee"];
@@ -134,8 +136,9 @@ class _StoreMainMenuState extends State<StoreMainMenu>
               padding: const EdgeInsets.all(12),
               sliver: SliverGrid(
                 delegate: SliverChildBuilderDelegate(
-                  childCount: 10,
-                  (context, index) => ItemMenuWidget(index: index),
+                  childCount: mockDrinkMenuView.length,
+                  (context, index) =>
+                      ItemMenuWidget(viewItem: mockDrinkMenuView[index]),
                 ),
 
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

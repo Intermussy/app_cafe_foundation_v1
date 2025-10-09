@@ -6,9 +6,15 @@ class PriceConfirmationWidget extends StatefulWidget {
     super.key,
     required this.totalPrice,
     required this.quantity,
+    required this.onSubmit,
+    required this.onDecrement,
+    required this.onIncrement,
   });
   final int quantity;
   final int totalPrice;
+  final VoidCallback onSubmit;
+  final ValueChanged<int> onDecrement;
+  final ValueChanged<int> onIncrement;
 
   @override
   State<PriceConfirmationWidget> createState() =>
@@ -16,24 +22,6 @@ class PriceConfirmationWidget extends StatefulWidget {
 }
 
 class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
-  late int _quantity;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _quantity = widget.quantity;
-  }
-
-  @override
-  void didUpdateWidget(covariant PriceConfirmationWidget oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.quantity != widget.quantity) {
-      _quantity = widget.quantity;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,6 +42,7 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
           OutlinedButton(
             onPressed: () {
               // TODO: decrease quantity
+              widget.onDecrement(1);
             },
             style: OutlinedButton.styleFrom(
               shape: const CircleBorder(),
@@ -69,7 +58,7 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              _quantity.toString(), // TODO: bind this to a state variable
+              widget.quantity.toString(), // TODO: bind this to a state variable
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
@@ -78,6 +67,7 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
           OutlinedButton(
             onPressed: () {
               // TODO: increase quantity
+              widget.onIncrement(1);
             },
             style: OutlinedButton.styleFrom(
               shape: const CircleBorder(),
@@ -88,10 +78,9 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
             ),
             child: const Icon(Icons.add, color: Colors.red, size: 28),
           ),
+          const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () {
-              // handle add to cart
-            },
+            onPressed: widget.onSubmit,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
@@ -102,10 +91,9 @@ class _PriceConfirmationWidgetState extends State<PriceConfirmationWidget> {
             ),
             child: Text(
               "+ Cart ${RupiahFormatter.withRupiah(widget.totalPrice)}",
-              // style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              //   color: Colors.red,
-              //   fontWeight: FontWeight.bold,
-              // ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.white),
             ),
           ),
         ],

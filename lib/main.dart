@@ -1,5 +1,5 @@
 import 'package:app_foundation/cubit/counter_cubit.dart';
-import 'package:app_foundation/bindings/router/AppRouter.dart';
+import 'package:app_foundation/bindings/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

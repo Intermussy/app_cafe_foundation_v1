@@ -1,4 +1,4 @@
-import 'package:app_foundation/features/store_menu/models/cart_item_view.dart';
+import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/views/receipt_item_widget.dart';
 import 'package:app_foundation/features/store_menu/views/total_price_label.dart';
 import 'package:flutter/material.dart';
@@ -49,9 +49,8 @@ class OrderReceiptPage extends StatelessWidget {
                               padding: const EdgeInsets.all(8),
                               itemCount: 3,
                               itemBuilder: (context, index) {
-                                return ReceiptItemWidget(
-                                  item: CartItemView.getMockData(),
-                                );
+                                final dcm = DrinkCartModel.getMockList();
+                                return ReceiptItemWidget(item: dcm[index]);
                               },
                             ),
                           ),
