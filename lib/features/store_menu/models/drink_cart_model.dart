@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
+import 'package:app_foundation/features/store_menu/models/drink_mapper.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
 
@@ -8,7 +9,7 @@ abstract class DrinkCartBase {}
 
 class DrinkCartDB extends DrinkCartBase {
   final int id;
-  final int detailId;
+  final int catalogId;
   final String name;
   final int price;
   final int quantity;
@@ -17,160 +18,68 @@ class DrinkCartDB extends DrinkCartBase {
   final String tempLevel;
   final String sugarLevel;
   final String iceLevel;
-  final List<int> toppingIds;
-  final List<int> syrupIds;
-  final bool canBeHot;
-  final bool canBeCold;
+  final int canBeHot;
+  final int canBeCold;
   DrinkCartDB({
     required this.id,
-    required this.detailId,
+    required this.catalogId,
     required this.name,
     required this.price,
     required this.quantity,
     required this.image,
     required this.type,
     required this.tempLevel,
-    this.sugarLevel = 'none',
-    this.iceLevel = 'none',
-    required this.toppingIds,
-    required this.syrupIds,
+    required this.sugarLevel,
+    required this.iceLevel,
     required this.canBeHot,
     required this.canBeCold,
   });
-  // int getTotalPrice() {
-  //   final toppingsTotal = (toppingList).fold<int>(0, (sum, t) => sum + t.price);
 
-  //   final syrupsTotal = (syrupList).fold<int>(0, (sum, s) => sum + s.price);
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
 
-  //   // toppings/syrups apply PER drink
-  //   return (quantity * (price + toppingsTotal + syrupsTotal));
-  // }
+    result.addAll({'id': id});
+    result.addAll({'catalogId': catalogId});
+    result.addAll({'name': name});
+    result.addAll({'price': price});
+    result.addAll({'quantity': quantity});
+    result.addAll({'image': image});
+    result.addAll({'type': type});
+    result.addAll({'tempLevel': tempLevel});
+    result.addAll({'sugarLevel': sugarLevel});
+    result.addAll({'iceLevel': iceLevel});
+    result.addAll({'canBeHot': canBeHot});
+    result.addAll({'canBeCold': canBeCold});
 
-  static DrinkCartDB getMockData() {
+    return result;
+  }
+
+  factory DrinkCartDB.fromMap(Map<String, dynamic> map) {
     return DrinkCartDB(
-      id: 23,
-      detailId: 32,
-      name: "Americano",
-      price: 15000,
-      quantity: 2,
-      image: 'assets/images/placeholder.png',
-      toppingIds: [],
-      canBeHot: true,
-      canBeCold: true,
-      tempLevel: 'cold',
-      type: 'coffee',
-      iceLevel: 'none',
-      syrupIds: [],
+      id: map['id']?.toInt() ?? 0,
+      catalogId: map['catalogId']?.toInt() ?? 0,
+      name: map['name'] ?? '',
+      price: map['price']?.toInt() ?? 0,
+      quantity: map['quantity']?.toInt() ?? 0,
+      image: map['image'] ?? '',
+      type: map['type'] ?? '',
+      tempLevel: map['tempLevel'] ?? '',
+      sugarLevel: map['sugarLevel'] ?? '',
+      iceLevel: map['iceLevel'] ?? '',
+      canBeHot: map['canBeHot']?.toInt() ?? 0,
+      canBeCold: map['canBeCold']?.toInt() ?? 0,
     );
   }
 
-  static List<DrinkCartDB> getMockList() {
-    return [
-      DrinkCartDB(
-        name: "Americano",
-        price: 15000,
-        quantity: 1,
-        image: 'assets/images/placeholder.png',
-        iceLevel: 'less',
-        toppingIds: [],
-        canBeHot: true,
-        canBeCold: true,
-        tempLevel: 'cold',
-        type: 'coffee',
-        id: 12,
-        detailId: 12,
-        syrupIds: [],
-      ),
-      DrinkCartDB(
-        name: "Babycchino",
-        price: 20000,
-        quantity: 1,
-        image: 'assets/images/placeholder.png',
-        canBeHot: true,
-        canBeCold: false,
-        tempLevel: 'hot',
-        type: 'coffee',
-        id: 123,
-        detailId: 123,
-        sugarLevel: 'normal',
-        iceLevel: 'none',
-        toppingIds: [],
-        syrupIds: [],
-      ),
-      DrinkCartDB(
-        name: "Avocado",
-        price: 24000,
-        quantity: 1,
-        image: 'assets/images/placeholder.png',
-        canBeHot: false,
-        canBeCold: true,
-        tempLevel: 'cold',
-        type: 'non-cofee',
-        id: 123,
-        detailId: 123,
-        sugarLevel: '',
-        iceLevel: '',
-        toppingIds: [],
-        syrupIds: [],
-      ),
-    ];
-  }
+  String toJson() => json.encode(toMap());
 
-  DrinkCartDB copyWith({
-    int? id,
-    int? detailId,
-    String? name,
-    int? price,
-    int? quantity,
-    String? image,
-    String? type,
-    String? tempLevel,
-    String? sugarLevel,
-    String? iceLevel,
-    List<int>? toppingIds,
-    List<int>? syrupIds,
-    bool? canBeHot,
-    bool? canBeCold,
-  }) {
-    return DrinkCartDB(
-      id: id ?? this.id,
-      detailId: detailId ?? this.detailId,
-      name: name ?? this.name,
-      price: price ?? this.price,
-      quantity: quantity ?? this.quantity,
-      image: image ?? this.image,
-      type: type ?? this.type,
-      tempLevel: tempLevel ?? this.tempLevel,
-      sugarLevel: sugarLevel ?? this.sugarLevel,
-      iceLevel: iceLevel ?? this.iceLevel,
-      toppingIds: toppingIds ?? this.toppingIds,
-      syrupIds: syrupIds ?? this.syrupIds,
-      canBeHot: canBeHot ?? this.canBeHot,
-      canBeCold: canBeCold ?? this.canBeCold,
-    );
-  }
-
-  factory DrinkCartDB.fromMemory(DrinkCartModel d) {
-    return DrinkCartDB(
-      id: d.id,
-      detailId: d.detailId,
-      name: d.name,
-      price: d.price,
-      quantity: d.quantity,
-      image: d.image,
-      type: d.type,
-      tempLevel: d.tempLevel,
-      toppingIds: d.toppings.map((t) => t.id).toList(),
-      syrupIds: d.toppings.map((s) => s.id).toList(),
-      canBeHot: d.canBeHot,
-      canBeCold: d.canBeCold,
-    );
-  }
+  factory DrinkCartDB.fromJson(String source) =>
+      DrinkCartDB.fromMap(json.decode(source));
 }
 
 class DrinkCartModel extends DrinkCartBase {
   final int id;
-  final int detailId;
+  final int catalogId;
   final String name;
   final int price;
   final int quantity;
@@ -185,7 +94,7 @@ class DrinkCartModel extends DrinkCartBase {
   final bool canBeCold;
   DrinkCartModel({
     required this.id,
-    required this.detailId,
+    required this.catalogId,
     required this.name,
     required this.price,
     required this.quantity,
@@ -210,7 +119,7 @@ class DrinkCartModel extends DrinkCartBase {
     return <DrinkCartModel>[
       DrinkCartModel(
         id: 2,
-        detailId: 2,
+        catalogId: 2,
         name: 'americano',
         price: 13000,
         quantity: 1,
@@ -234,7 +143,7 @@ class DrinkCartModel extends DrinkCartBase {
         tempLevel: 'hot',
         type: 'coffee',
         id: 123,
-        detailId: 123,
+        catalogId: 123,
         sugarLevel: 'normal',
         iceLevel: 'none',
         toppings: [],
@@ -250,7 +159,7 @@ class DrinkCartModel extends DrinkCartBase {
         tempLevel: 'cold',
         type: 'non-cofee',
         id: 123,
-        detailId: 123,
+        catalogId: 123,
         sugarLevel: 'none',
         iceLevel: 'normal',
         toppings: [],
@@ -261,7 +170,7 @@ class DrinkCartModel extends DrinkCartBase {
 
   DrinkCartModel copyWith({
     int? id,
-    int? detailId,
+    int? catalogId,
     String? name,
     int? price,
     int? quantity,
@@ -277,7 +186,7 @@ class DrinkCartModel extends DrinkCartBase {
   }) {
     return DrinkCartModel(
       id: id ?? this.id,
-      detailId: detailId ?? this.detailId,
+      catalogId: catalogId ?? this.catalogId,
       name: name ?? this.name,
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
@@ -297,7 +206,7 @@ class DrinkCartModel extends DrinkCartBase {
     final result = <String, dynamic>{};
 
     result.addAll({'id': id});
-    result.addAll({'detailId': detailId});
+    result.addAll({'detailId': catalogId});
     result.addAll({'name': name});
     result.addAll({'price': price});
     result.addAll({'quantity': quantity});
@@ -317,7 +226,7 @@ class DrinkCartModel extends DrinkCartBase {
   factory DrinkCartModel.fromMap(Map<String, dynamic> map) {
     return DrinkCartModel(
       id: map['id']?.toInt() ?? 0,
-      detailId: map['detailId']?.toInt() ?? 0,
+      catalogId: map['detailId']?.toInt() ?? 0,
       name: map['name'] ?? '',
       price: map['price']?.toInt() ?? 0,
       quantity: map['quantity']?.toInt() ?? 0,
@@ -343,7 +252,7 @@ class DrinkCartModel extends DrinkCartBase {
   factory DrinkCartModel.fromDB(List<Topping> t, List<Syrup> s, DrinkCartDB d) {
     return DrinkCartModel(
       id: d.id,
-      detailId: d.detailId,
+      catalogId: d.catalogId,
       name: d.name,
       price: d.price,
       quantity: d.quantity,
@@ -354,14 +263,14 @@ class DrinkCartModel extends DrinkCartBase {
       iceLevel: d.iceLevel,
       toppings: t,
       syrups: s,
-      canBeHot: d.canBeHot,
-      canBeCold: d.canBeCold,
+      canBeHot: d.canBeHot.toBool(),
+      canBeCold: d.canBeCold.toBool(),
     );
   }
   factory DrinkCartModel.initial(DrinkDetailModel d) {
     return DrinkCartModel(
       id: d.cartId ?? 0,
-      detailId: d.id,
+      catalogId: d.id,
       name: d.name,
       price: d.basePrice,
       quantity: d.quantity,

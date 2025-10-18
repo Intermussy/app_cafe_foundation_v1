@@ -1,6 +1,7 @@
 -- create drink_cart table
 CREATE TABLE IF NOT EXISTS cart_drinks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  catalog_id INTEGER NOT NULL,
   name TEXT NOT NULL,
   image TEXT NOT NULL,
   type TEXT NOT NULL,
@@ -11,7 +12,21 @@ CREATE TABLE IF NOT EXISTS cart_drinks (
   temperature TEXT  NOT NULL,
   can_be_hot INTEGER NOT NULL CHECK(can_be_hot IN (0,1)),
   can_be_cold INTEGER NOT NULL CHECK(can_be_cold IN (0,1))
-  quantity INTEGER NOT NULL DEFAULT 1
+  quantity INTEGER NOT NULL DEFAULT 1, 
+  FOREIGN KEY (catalog_id) REFERENCES catalog_drinks (id) ON DELETE CASCADE,
+);
+
+--create Catalog table for cache
+CREATE TABLE IF NOT EXISTS catalog_drinks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  image TEXT NOT NULL,
+  price INTEGER NOT NULL,
+  ice_available INTEGER NOT NULL CHECK(ice_available IN (0,1)),
+  hot_available INTEGER NOT NULL CHECK(hot_available IN (0,1)),
+  type TEXT NOT NULL,
+  regular_size_available INTEGER NOT NULL CHECK(regular_size_available IN (0,1)), 
+  large_size_available INTEGER NOT NULL CHECK(large_size_available IN (0,1))
 );
 
 -- create toppings table

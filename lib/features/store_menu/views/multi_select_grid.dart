@@ -46,14 +46,6 @@ class _MultiSelectGridState<T extends AddonItem>
   }
 
   @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,

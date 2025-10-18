@@ -15,8 +15,6 @@ class AppRouter {
         return MaterialPageRoute<DrinkCartModel>(builder: (_) => SplashPage());
       case '/storemenu':
         return MaterialPageRoute(builder: (_) => StoreMainMenu());
-      case '/profile':
-        return MaterialPageRoute(builder: (_) => ProfilePage());
       case '/shoppingcart':
         return MaterialPageRoute(builder: (_) => CartListPage());
       case '/drinkdetail':

@@ -67,12 +67,12 @@ class ItemMenuWidget extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.ac_unit,
-                    size: 16,
+                    size: 24,
                     color: viewItem.iceAvailable ? Colors.blue : Colors.grey,
                   ),
                   Icon(
                     Icons.local_fire_department,
-                    size: 16,
+                    size: 24,
                     color: viewItem.hotAvailable ? Colors.red : Colors.grey,
                   ),
                 ],

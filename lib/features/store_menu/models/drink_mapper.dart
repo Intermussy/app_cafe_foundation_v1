@@ -17,7 +17,7 @@ extension FromCartX on FromCart {
       syrups: (drink.syrups),
       canBeHot: drink.canBeHot,
       canBeCold: drink.canBeCold,
-      id: drink.detailId,
+      id: drink.catalogId,
       cartId: drink.id,
     );
   }
@@ -32,7 +32,7 @@ extension FromMenuX on FromMenu {
       image: drink.image,
       basePrice: drink.price,
       quantity: 1,
-      temp: drink.hotAvailable ? 'hot' : (drink.iceAvailable ? 'cold' : 'hot'),
+      temp: drink.hotAvailable ? 'hot' : 'cold',
       ice: drink.iceAvailable ? 'normal' : 'none',
       sugar: 'normal',
       toppings: [],
@@ -42,4 +42,12 @@ extension FromMenuX on FromMenu {
       type: drink.type,
     );
   }
+}
+
+extension BoolDbMapper on bool {
+  int toDb() => this ? 1 : 0;
+}
+
+extension IntBoolMapper on int {
+  bool toBool() => this == 1;
 }

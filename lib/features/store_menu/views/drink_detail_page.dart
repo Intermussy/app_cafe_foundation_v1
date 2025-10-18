@@ -1,6 +1,6 @@
+import 'package:app_foundation/commons/widgets/custom_toast.dart';
 import 'package:app_foundation/features/store_menu/controllers/bloc/cart/cart_bloc.dart';
 import 'package:app_foundation/features/store_menu/controllers/bloc/drink_customization/drink_bloc.dart';
-import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_mapper.dart';
 import 'package:app_foundation/features/store_menu/models/drink_source.dart';
@@ -10,8 +10,8 @@ import 'package:app_foundation/features/store_menu/views/multi_select_grid.dart'
 import 'package:app_foundation/features/store_menu/views/price_confirmation_widget.dart';
 import 'package:app_foundation/features/store_menu/views/single_select_grid.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/change_notifier.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class DrinkDetailPage extends StatefulWidget {
   const DrinkDetailPage({
@@ -30,6 +30,8 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
   List<String> iceLevel = ["normal", "less", "none"];
   List<String> tempLevel = ["hot", "cold"];
   List<int> totalPrice = [];
+  FToast fToast = FToast();
+  late DrinkBloc _drinkBloc;
 
   late DrinkDetailModel model;
   @override
@@ -37,6 +39,8 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
     // TODO: implement initState
     super.initState();
     initUpdateDrinkPage();
+    if (!mounted) return;
+    fToast.init(context);
   }
 
   void initUpdateDrinkPage() {
@@ -44,12 +48,24 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
 
     if (src is FromCart) {
       model = src.toDetailModel();
+      _drinkBloc = DrinkBloc(initialModel: model);
       if (!model.canBeCold) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
       }
+      if (!model.canBeHot) {
+        tempLevel = ["cold"];
+      }
     } else if (src is FromMenu) {
       model = src.toDetailModel();
+      _drinkBloc = DrinkBloc(initialModel: model);
+      if (!model.canBeCold) {
+        iceLevel = ["none"];
+        tempLevel = ["hot"];
+      }
+      if (!model.canBeHot) {
+        tempLevel = ["cold"];
+      }
     } else {
       throw AssertionError('Unhandled DrinkSource: $src');
     }
@@ -64,42 +80,43 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
     }
   }
 
-  ValueListenable<List<Topping>> listenableTopping = ValueNotifier([]);
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => DrinkBloc(initialModel: model)),
+        BlocProvider(create: (context) => _drinkBloc),
         BlocProvider(create: (context) => CartBloc()),
       ],
       child: Scaffold(
-        bottomNavigationBar:
-            BlocSelector<DrinkBloc, DrinkState, DrinkDetailModel>(
-              selector: (state) {
-                return state is DrinkLoaded ? state.model : model;
-              },
-              builder: (context, drink) {
-                return PriceConfirmationWidget(
-                  totalPrice: drink.getTotalPrice(),
-                  quantity: drink.quantity,
-                  onSubmit: () {
-                    context.read<DrinkBloc>().add(DrinkSubmit());
-                  },
-                  onDecrement: (s) {
-                    if (drink.quantity > 1) {
-                      context.read<DrinkBloc>().add(
-                        DrinkDecrementQuantity(changes: s),
-                      );
-                    }
-                  },
-                  onIncrement: (s) {
+        bottomNavigationBar: BlocBuilder<DrinkBloc, DrinkState>(
+          buildWhen: (previous, current) {
+            return true;
+          },
+          builder: (context, state) {
+            if (state is DrinkLoaded) {
+              return PriceConfirmationWidget(
+                totalPrice: state.getTotalPrice(),
+                quantity: state.model.quantity,
+                onSubmit: () {
+                  context.read<DrinkBloc>().add(DrinkSubmit());
+                },
+                onDecrement: (s) {
+                  if (state.model.quantity > 1) {
                     context.read<DrinkBloc>().add(
-                      DrinkIncrementQuantity(changes: s),
+                      DrinkDecrementQuantity(changes: s),
                     );
-                  },
-                );
-              },
-            ),
+                  }
+                },
+                onIncrement: (s) {
+                  context.read<DrinkBloc>().add(
+                    DrinkIncrementQuantity(changes: s),
+                  );
+                },
+              );
+            }
+            return SizedBox();
+          },
+        ),
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -174,95 +191,119 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
             ),
 
             SliverToBoxAdapter(
-              child: BlocSelector<DrinkBloc, DrinkState, String>(
-                selector: (state) {
-                  return state is DrinkLoaded ? state.selectedIce : 'none';
+              child: BlocBuilder<DrinkBloc, DrinkState>(
+                buildWhen: (previous, current) {
+                  return true;
                 },
-                builder: (context, ice) {
-                  if (ice == 'cold' && model.canBeCold) {
-                    return SingleSelectGrid(
-                      label: 'Ice Level',
-                      levels: iceLevel,
-                      crossAxisCount: 3,
-                      selected: ice,
-                      onChanged: (String s) {
-                        context.read<DrinkBloc>().add(
-                          DrinkUpdateIceLevel(ice: s),
-                        );
-                      },
-                    );
-                  } else {
-                    return SizedBox();
+                builder: (context, state) {
+                  if (state is DrinkLoaded) {
+                    if (state.selectedTemp == 'cold' && state.model.canBeCold) {
+                      return SingleSelectGrid(
+                        label: 'Ice Level',
+                        levels: iceLevel,
+                        crossAxisCount: 3,
+                        selected: state.selectedIce,
+                        onChanged: (String s) {
+                          context.read<DrinkBloc>().add(
+                            DrinkUpdateIceLevel(ice: s),
+                          );
+                        },
+                      );
+                    }
                   }
+                  return SizedBox();
                 },
               ),
             ),
             SliverToBoxAdapter(
-              child: BlocListener<DrinkBloc, DrinkState>(
+              child: BlocConsumer<DrinkBloc, DrinkState>(
+                listenWhen: (previous, current) {
+                  if (previous is DrinkLoaded && current is DrinkLoaded) {
+                    return previous.selectedToppings !=
+                        current.selectedToppings;
+                  }
+                  return false;
+                },
                 listener: (context, state) {
-                  // TODO: implement listener
                   if (state is DrinkLoaded) {
-                    if (state.selectedToppings.length == 2) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('maximum toppings exceeded')),
+                    final t = state.selectedToppings;
+                    if (t.length == 2) {
+                      fToast.showToast(
+                        child: CustomToast.normalToast(
+                          message: 'max toppings reached',
+                        ),
                       );
                     }
                   }
                 },
-                child: BlocSelector<DrinkBloc, DrinkState, List<Topping>>(
-                  selector: (state) {
-                    return state is DrinkLoaded ? state.selectedToppings : [];
-                  },
-                  builder: (context, toppings) {
+                buildWhen: (previous, current) {
+                  return false;
+                },
+                builder: (context, state) {
+                  if (state is DrinkLoaded) {
                     return MultiSelectGrid<Topping>(
                       maxSelection: 2,
-                      selected: (toppings),
+                      selected: state.model.toppings,
                       items: Topping.getMockList(),
                       onChanged: (val) {
-                        if (model.toppings.length < 3) {
-                          context.read<DrinkBloc>().add(
-                            DrinkUpdateTopping(toppings: val),
-                          );
-                        }
+                        _drinkBloc.add(
+                          DrinkUpdateTopping(toppings: List.from(val)),
+                        );
                       },
                       label: 'Topping',
                     );
-                  },
-                ),
+                  }
+                  return SizedBox();
+                },
               ),
             ),
             SliverToBoxAdapter(
-              child: BlocListener<DrinkBloc, DrinkState>(
+              child: BlocConsumer<DrinkBloc, DrinkState>(
+                listenWhen: (previous, current) {
+                  if (previous is DrinkLoaded && current is DrinkLoaded) {
+                    return previous.selectedSyrups != current.selectedSyrups;
+                  }
+                  return false;
+                },
                 listener: (context, state) {
-                  // TODO: implement listener
                   if (state is DrinkLoaded) {
                     if (state.selectedSyrups.length == 2) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('maximum syrups exceeded')),
+                      fToast.removeQueuedCustomToasts();
+                      fToast.showToast(
+                        child: CustomToast.normalToast(
+                          message: 'max syrups reached',
+                        ),
+                      );
+                    } else {
+                      fToast.removeCustomToast();
+                      fToast.showToast(
+                        child: CustomToast.normalToast(
+                          message: '${state.selectedSyrups.last.name} selected',
+                        ),
                       );
                     }
                   }
                 },
-                child: BlocSelector<DrinkBloc, DrinkState, List<Syrup>>(
-                  selector: (state) {
-                    return state is DrinkLoaded ? state.selectedSyrups : [];
-                  },
-                  builder: (context, syrups) {
+                buildWhen: (previous, current) {
+                  return false;
+                },
+                builder: (context, state) {
+                  if (state is DrinkLoaded) {
                     return MultiSelectGrid<Syrup>(
                       maxSelection: 2,
-                      selected: syrups,
+                      selected: state.selectedSyrups,
                       items: Syrup.getMockList(),
                       onChanged: (val) {
-                        if (model.syrups.length < 3) {
-                          context.read<DrinkBloc>().add(
-                            DrinkUpdateSyrup(syrups: val),
-                          );
-                        }
+                        _drinkBloc.add(
+                          DrinkUpdateSyrup(syrups: List.from(val)),
+                        );
                       },
                       label: 'Syrup',
                     );
-                  },
-                ),
+                  }
+
+                  return SizedBox();
+                },
               ),
             ),
 

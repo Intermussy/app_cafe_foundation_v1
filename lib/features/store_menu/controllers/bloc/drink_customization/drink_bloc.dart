@@ -1,22 +1,19 @@
 import 'dart:async';
-
-import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:rxdart/rxdart.dart';
 
 part 'drink_event.dart';
 part 'drink_state.dart';
 
 class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
-  DrinkBloc({DrinkDetailModel? initialModel})
-    : super(
-        initialModel != null
-            ? DrinkLoaded.initial(initialModel)
-            : DrinkInitial(),
-      ) {
+  DrinkBloc({required DrinkDetailModel initialModel})
+    : super(DrinkLoaded.initial(initialModel)) {
     on<DrinkEvent>((event, emit) {
       // TODO: implement event handler
     });
@@ -24,8 +21,20 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
     on<DrinkUpdateTempLevel>(onUpdateTemp);
     on<DrinkUpdateIceLevel>(onUpdateIce);
     on<DrinkUpdateSugarLevel>(onUpdateSugar);
-    on<DrinkUpdateTopping>(onUpdateTopping);
-    on<DrinkUpdateSyrup>(onUpdateSyrup);
+    on<DrinkUpdateTopping>(
+      onUpdateTopping,
+      transformer: (events, mapper) => droppable<DrinkUpdateTopping>().call(
+        events.debounceTime(const Duration(milliseconds: 250)),
+        mapper,
+      ),
+    );
+    on<DrinkUpdateSyrup>(
+      onUpdateSyrup,
+      transformer: (events, mapper) => droppable<DrinkUpdateSyrup>().call(
+        events.debounceTime(const Duration(milliseconds: 250)),
+        mapper,
+      ),
+    );
     on<DrinkIncrementQuantity>(onIncrement);
     on<DrinkDecrementQuantity>(onDecrement);
   }
@@ -43,15 +52,17 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
   FutureOr<void> onUpdateTopping(
     DrinkUpdateTopping event,
     Emitter<DrinkState> emit,
-  ) {
+  ) async {
     final current = state;
     if (current is DrinkLoaded) {
-      emit(
-        current.copyWith(
-          selectedToppings: event.toppings,
-          totalPrice: current.getTotalPrice(),
-        ),
-      );
+      if (current.selectedToppings.length < 3) {
+        emit(
+          current.copyWith(
+            selectedToppings: List.from(event.toppings),
+            totalPrice: current.getTotalPrice(),
+          ),
+        );
+      }
     }
   }
 
@@ -78,15 +89,17 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
   FutureOr<void> onUpdateSyrup(
     DrinkUpdateSyrup event,
     Emitter<DrinkState> emit,
-  ) {
+  ) async {
     final current = state;
     if (current is DrinkLoaded) {
-      emit(
-        current.copyWith(
-          selectedSyrups: event.syrups,
-          totalPrice: current.getTotalPrice(),
-        ),
-      );
+      if (current.selectedSyrups.length < 3) {
+        emit(
+          current.copyWith(
+            selectedSyrups: List.from(event.syrups),
+            totalPrice: current.getTotalPrice(),
+          ),
+        );
+      }
     }
   }
 
