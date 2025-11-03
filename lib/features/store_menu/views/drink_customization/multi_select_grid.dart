@@ -1,8 +1,8 @@
 import 'package:app_foundation/bindings/rupiah_formatter.dart';
-import 'package:app_foundation/features/store_menu/models/addon_base.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/addon_base.dart';
 import 'package:flutter/material.dart';
 
-class MultiSelectGrid<T extends AddonItem> extends StatefulWidget {
+class MultiSelectGrid<T extends AddonBase> extends StatefulWidget {
   const MultiSelectGrid({
     super.key,
     required this.maxSelection,
@@ -21,7 +21,7 @@ class MultiSelectGrid<T extends AddonItem> extends StatefulWidget {
   State<MultiSelectGrid<T>> createState() => _MultiSelectGridState<T>();
 }
 
-class _MultiSelectGridState<T extends AddonItem>
+class _MultiSelectGridState<T extends AddonBase>
     extends State<MultiSelectGrid<T>> {
   var _selected = <T>[];
 
@@ -41,7 +41,16 @@ class _MultiSelectGridState<T extends AddonItem>
     // TODO: implement initState
     super.initState();
     if (widget.selected.isNotEmpty) {
-      _selected = widget.selected;
+      _selected = List<T>.of(widget.selected);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant MultiSelectGrid<T> oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selected != widget.selected) {
+      _selected = List<T>.from(widget.selected);
     }
   }
 

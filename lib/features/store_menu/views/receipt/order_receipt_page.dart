@@ -1,10 +1,12 @@
 import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
-import 'package:app_foundation/features/store_menu/views/receipt_item_widget.dart';
-import 'package:app_foundation/features/store_menu/views/total_price_label.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
+import 'package:app_foundation/features/store_menu/views/receipt/receipt_item_widget.dart';
+import 'package:app_foundation/features/store_menu/views/receipt/total_price_label.dart';
 import 'package:flutter/material.dart';
 
 class OrderReceiptPage extends StatelessWidget {
-  const OrderReceiptPage({super.key});
+  const OrderReceiptPage({super.key, required this.drinks});
+  final List<DrinkCartModel> drinks;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +49,10 @@ class OrderReceiptPage extends StatelessWidget {
                           Flexible(
                             child: ListView.builder(
                               padding: const EdgeInsets.all(8),
-                              itemCount: 3,
+                              itemCount: drinks.length,
                               itemBuilder: (context, index) {
-                                final dcm = DrinkCartModel.getMockList();
-                                return ReceiptItemWidget(item: dcm[index]);
+                                final drink = drinks[index];
+                                return ReceiptItemWidget(item: drink);
                               },
                             ),
                           ),
@@ -58,7 +60,9 @@ class OrderReceiptPage extends StatelessWidget {
                           Flexible(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: TotalPriceLabel(total: 30000),
+                              child: TotalPriceLabel(
+                                total: drinks.getTotalPrice(),
+                              ),
                             ),
                           ),
                         ],
@@ -106,7 +110,9 @@ class OrderReceiptPage extends StatelessWidget {
                 child: Text('Cancel'),
               ),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.green,

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:app_foundation/features/store_menu/models/addon_base.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/addon_base.dart';
 
-class Syrup extends AddonItem {
+class Syrup extends AddonBase {
   Syrup({required super.id, required super.name, required super.price});
 
   static List<Syrup> getMockList() {
@@ -28,4 +28,8 @@ class Syrup extends AddonItem {
   String toJson() => json.encode(toMap());
 
   factory Syrup.fromJson(String source) => Syrup.fromMap(json.decode(source));
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
 }

@@ -1,17 +1,20 @@
+import 'package:app_foundation/bindings/app_logger.dart';
 import 'package:app_foundation/commons/widgets/custom_toast.dart';
+import 'package:app_foundation/commons/widgets/skeletons.dart';
 import 'package:app_foundation/features/store_menu/controllers/bloc/cart/cart_bloc.dart';
 import 'package:app_foundation/features/store_menu/controllers/bloc/drink_customization/drink_bloc.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
-import 'package:app_foundation/features/store_menu/models/drink_mapper.dart';
-import 'package:app_foundation/features/store_menu/models/drink_source.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
-import 'package:app_foundation/features/store_menu/views/multi_select_grid.dart';
-import 'package:app_foundation/features/store_menu/views/price_confirmation_widget.dart';
-import 'package:app_foundation/features/store_menu/views/single_select_grid.dart';
+import 'package:app_foundation/features/store_menu/views/drink_customization/multi_select_grid.dart';
+import 'package:app_foundation/features/store_menu/views/drink_customization/price_confirmation_widget.dart';
+import 'package:app_foundation/features/store_menu/views/drink_customization/single_select_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class DrinkDetailPage extends StatefulWidget {
   const DrinkDetailPage({
@@ -29,7 +32,6 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
   List<String> sugarLevel = ["normal", "less", "none"];
   List<String> iceLevel = ["normal", "less", "none"];
   List<String> tempLevel = ["hot", "cold"];
-  List<int> totalPrice = [];
   FToast fToast = FToast();
   late DrinkBloc _drinkBloc;
 
@@ -48,6 +50,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
 
     if (src is FromCart) {
       model = src.toDetailModel();
+      AppLogger().debug(model.toString());
       _drinkBloc = DrinkBloc(initialModel: model);
       if (!model.canBeCold) {
         iceLevel = ["none"];
@@ -58,6 +61,8 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
       }
     } else if (src is FromMenu) {
       model = src.toDetailModel();
+      AppLogger().debug(model.toString());
+
       _drinkBloc = DrinkBloc(initialModel: model);
       if (!model.canBeCold) {
         iceLevel = ["none"];
@@ -88,29 +93,46 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
         BlocProvider(create: (context) => CartBloc()),
       ],
       child: Scaffold(
-        bottomNavigationBar: BlocBuilder<DrinkBloc, DrinkState>(
+        bottomNavigationBar: BlocConsumer<DrinkBloc, DrinkState>(
+          listener: (context, state) {
+            if (state is DrinkSuccess) {
+              fToast.showToast(
+                child: CustomToast.successToast(message: 'Added to Cart'),
+              );
+              Navigator.of(context).pop(state.newDrink);
+            } else if (state is DrinkError) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [Text(state.error)],
+                  ),
+                ),
+              );
+            }
+          },
           buildWhen: (previous, current) {
-            return true;
+            if (current is DrinkLoading) return true;
+            return current is DrinkLoaded;
           },
           builder: (context, state) {
-            if (state is DrinkLoaded) {
+            if (state is DrinkLoading) {
+              return SkeletonWidget.regulerLoading;
+            } else if (state is DrinkLoaded) {
               return PriceConfirmationWidget(
                 totalPrice: state.getTotalPrice(),
                 quantity: state.model.quantity,
                 onSubmit: () {
-                  context.read<DrinkBloc>().add(DrinkSubmit());
+                  _drinkBloc.add(DrinkSubmit());
                 },
                 onDecrement: (s) {
                   if (state.model.quantity > 1) {
-                    context.read<DrinkBloc>().add(
-                      DrinkDecrementQuantity(changes: s),
-                    );
+                    _drinkBloc.add(DrinkDecrementQuantity(changes: s));
                   }
                 },
                 onIncrement: (s) {
-                  context.read<DrinkBloc>().add(
-                    DrinkIncrementQuantity(changes: s),
-                  );
+                  _drinkBloc.add(DrinkIncrementQuantity(changes: s));
                 },
               );
             }
@@ -144,7 +166,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                     ),
                     centerTitle: false,
                     collapseMode: CollapseMode.parallax,
-                    background: Image.asset(model.image, fit: BoxFit.cover),
+                    background: Image.network(model.image, fit: BoxFit.cover),
                   );
                 },
               ),
@@ -161,9 +183,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                     crossAxisCount: 2,
                     selected: selectedTemp,
                     onChanged: (String s) {
-                      context.read<DrinkBloc>().add(
-                        DrinkUpdateTempLevel(temperature: s),
-                      );
+                      _drinkBloc.add(DrinkUpdateTempLevel(temperature: s));
                     },
                   );
                 },
@@ -181,9 +201,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                     crossAxisCount: 3,
                     selected: sugar,
                     onChanged: (s) {
-                      context.read<DrinkBloc>().add(
-                        DrinkUpdateSugarLevel(sugar: s),
-                      );
+                      _drinkBloc.add(DrinkUpdateSugarLevel(sugar: s));
                     },
                   );
                 },
@@ -204,9 +222,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                         crossAxisCount: 3,
                         selected: state.selectedIce,
                         onChanged: (String s) {
-                          context.read<DrinkBloc>().add(
-                            DrinkUpdateIceLevel(ice: s),
-                          );
+                          _drinkBloc.add(DrinkUpdateIceLevel(ice: s));
                         },
                       );
                     }
@@ -237,21 +253,36 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                   }
                 },
                 buildWhen: (previous, current) {
-                  return false;
+                  if (previous is DrinkLoaded && current is DrinkLoaded) {
+                    return previous.isAddonLoading != current.isAddonLoading;
+                  }
+                  return true;
                 },
                 builder: (context, state) {
                   if (state is DrinkLoaded) {
-                    return MultiSelectGrid<Topping>(
-                      maxSelection: 2,
-                      selected: state.model.toppings,
-                      items: Topping.getMockList(),
-                      onChanged: (val) {
-                        _drinkBloc.add(
-                          DrinkUpdateTopping(toppings: List.from(val)),
-                        );
-                      },
-                      label: 'Topping',
-                    );
+                    if (state.isAddonLoading) {
+                      return Skeleton.shade(
+                        child: MultiSelectGrid<Topping>(
+                          maxSelection: 2,
+                          selected: const [],
+                          items: const [], // temporarily empty
+                          onChanged: (_) {},
+                          label: 'Topping',
+                        ),
+                      );
+                    } else {
+                      return MultiSelectGrid<Topping>(
+                        maxSelection: 2,
+                        selected: state.model.toppings,
+                        items: state.availableToppings,
+                        onChanged: (val) {
+                          _drinkBloc.add(
+                            DrinkUpdateTopping(toppings: List.from(val)),
+                          );
+                        },
+                        label: 'Topping',
+                      );
+                    }
                   }
                   return SizedBox();
                 },
@@ -285,14 +316,28 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                   }
                 },
                 buildWhen: (previous, current) {
+                  if (current is DrinkLoaded && previous is DrinkLoaded) {
+                    return previous.isAddonLoading != current.isAddonLoading;
+                  }
                   return false;
                 },
                 builder: (context, state) {
                   if (state is DrinkLoaded) {
+                    if (state.isAddonLoading) {
+                      return Skeleton.leaf(
+                        child: MultiSelectGrid<Syrup>(
+                          maxSelection: 2,
+                          selected: [],
+                          items: [],
+                          onChanged: (_) {},
+                          label: 'Syrup',
+                        ),
+                      );
+                    }
                     return MultiSelectGrid<Syrup>(
                       maxSelection: 2,
                       selected: state.selectedSyrups,
-                      items: Syrup.getMockList(),
+                      items: state.availableSyrups,
                       onChanged: (val) {
                         _drinkBloc.add(
                           DrinkUpdateSyrup(syrups: List.from(val)),

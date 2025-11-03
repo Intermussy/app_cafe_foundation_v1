@@ -7,12 +7,15 @@ final class DrinkInitial extends DrinkState {}
 
 class DrinkLoading extends DrinkState {}
 
-class DrinkErrorg extends DrinkState {
+class DrinkError extends DrinkState {
   final String error;
-  DrinkErrorg({required this.error});
+  DrinkError({required this.error});
 }
 
-class DrinkSuccess extends DrinkState {}
+class DrinkSuccess extends DrinkState {
+  final DrinkCartModel newDrink;
+  DrinkSuccess({required this.newDrink});
+}
 
 class DrinkLoaded extends DrinkState {
   final DrinkDetailModel model;
@@ -22,6 +25,9 @@ class DrinkLoaded extends DrinkState {
   final List<Topping> selectedToppings;
   final List<Syrup> selectedSyrups;
   final int totalPrice;
+  final List<Topping> availableToppings;
+  final List<Syrup> availableSyrups;
+  final bool isAddonLoading;
   DrinkLoaded({
     required this.model,
     required this.selectedSugar,
@@ -30,6 +36,9 @@ class DrinkLoaded extends DrinkState {
     this.selectedToppings = const [],
     this.selectedSyrups = const [],
     required this.totalPrice,
+    required this.availableToppings,
+    required this.availableSyrups,
+    this.isAddonLoading = false,
   });
 
   factory DrinkLoaded.initial(DrinkDetailModel model) {
@@ -42,6 +51,8 @@ class DrinkLoaded extends DrinkState {
         selectedToppings: model.toppings,
         selectedSyrups: model.syrups,
         totalPrice: model.getTotalPrice(),
+        availableToppings: [],
+        availableSyrups: [],
       );
     } else {
       return DrinkLoaded(
@@ -54,6 +65,8 @@ class DrinkLoaded extends DrinkState {
         selectedToppings: model.toppings,
         selectedSyrups: model.syrups,
         totalPrice: model.getTotalPrice(),
+        availableToppings: [],
+        availableSyrups: [],
       );
     }
   }
@@ -73,6 +86,9 @@ class DrinkLoaded extends DrinkState {
     List<Topping>? selectedToppings,
     List<Syrup>? selectedSyrups,
     int? totalPrice,
+    List<Topping>? availableToppings,
+    List<Syrup>? availableSyrups,
+    bool? isAddonLoading,
   }) {
     return DrinkLoaded(
       model: model ?? this.model,
@@ -82,6 +98,9 @@ class DrinkLoaded extends DrinkState {
       selectedToppings: selectedToppings ?? this.selectedToppings,
       selectedSyrups: selectedSyrups ?? this.selectedSyrups,
       totalPrice: totalPrice ?? this.totalPrice,
+      availableToppings: availableToppings ?? this.availableToppings,
+      availableSyrups: availableSyrups ?? this.availableSyrups,
+      isAddonLoading: isAddonLoading ?? this.isAddonLoading,
     );
   }
 }

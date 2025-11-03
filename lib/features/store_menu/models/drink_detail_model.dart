@@ -75,4 +75,9 @@ class DrinkDetailModel {
       canBeCold: canBeCold ?? this.canBeCold,
     );
   }
+
+  @override
+  String toString() {
+    return 'DrinkDetailModel(id: $id, cartId: $cartId, name: $name, image: $image, basePrice: $basePrice, quantity: $quantity, type: $type, temp: $temp, sugar: $sugar, ice: $ice, toppings: $toppings, syrups: $syrups, canBeHot: $canBeHot, canBeCold: $canBeCold)';
+  }
 }

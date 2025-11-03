@@ -9,15 +9,13 @@ CREATE TABLE IF NOT EXISTS cart_drinks (
   temp_level TEXT  NOT NULL,
   sugar_level TEXT  NOT NULL,
   ice_level TEXT NOT NULL,
-  temperature TEXT  NOT NULL,
   can_be_hot INTEGER NOT NULL CHECK(can_be_hot IN (0,1)),
-  can_be_cold INTEGER NOT NULL CHECK(can_be_cold IN (0,1))
-  quantity INTEGER NOT NULL DEFAULT 1, 
-  FOREIGN KEY (catalog_id) REFERENCES catalog_drinks (id) ON DELETE CASCADE,
+  can_be_cold INTEGER NOT NULL CHECK(can_be_cold IN (0,1)), 
+  quantity INTEGER NOT NULL DEFAULT 1 
 );
 
 --create Catalog table for cache
-CREATE TABLE IF NOT EXISTS catalog_drinks (
+CREATE TABLE IF NOT EXISTS catalog_cache (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
   image TEXT NOT NULL,

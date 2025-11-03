@@ -1,11 +1,12 @@
+import 'package:app_foundation/bindings/app_logger.dart';
 import 'package:app_foundation/bindings/rupiah_formatter.dart';
 import 'package:app_foundation/features/store_menu/models/drink_catalog_model.dart';
-import 'package:app_foundation/features/store_menu/models/drink_source.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
 import 'package:flutter/material.dart';
 
 class ItemMenuWidget extends StatelessWidget {
-  const ItemMenuWidget({super.key, required this.viewItem});
-  final DrinkCatalogModel viewItem;
+  const ItemMenuWidget({super.key, required this.drink});
+  final DrinkCatalogModel drink;
 
   @override
   Widget build(BuildContext context) {
@@ -16,16 +17,17 @@ class ItemMenuWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: GestureDetector(
         onTap: () {
+          AppLogger().info(drink.toMap().toString());
           Navigator.of(context).pushNamed(
             '/drinkdetail',
-            arguments: (FromMenu(menuDrink: viewItem), false),
+            arguments: (FromMenu(menuDrink: drink), false),
           );
         },
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset(
-                viewItem.image,
+              child: Image.network(
+                drink.image,
                 fit: BoxFit.cover,
                 width: double.infinity,
               ),
@@ -45,14 +47,14 @@ class ItemMenuWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    viewItem.name,
+                    drink.name,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    RupiahFormatter.withRupiah(viewItem.price),
+                    RupiahFormatter.withRupiah(drink.price),
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
@@ -68,12 +70,12 @@ class ItemMenuWidget extends StatelessWidget {
                   Icon(
                     Icons.ac_unit,
                     size: 24,
-                    color: viewItem.iceAvailable ? Colors.blue : Colors.grey,
+                    color: drink.iceAvailable ? Colors.blue : Colors.grey,
                   ),
                   Icon(
                     Icons.local_fire_department,
                     size: 24,
-                    color: viewItem.hotAvailable ? Colors.red : Colors.grey,
+                    color: drink.hotAvailable ? Colors.red : Colors.grey,
                   ),
                 ],
               ),

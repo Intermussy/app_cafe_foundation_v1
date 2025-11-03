@@ -1,7 +1,11 @@
 import 'dart:async';
+import 'package:app_foundation/commons/widgets/event_transformer_helper.dart';
+import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
+import 'package:app_foundation/features/store_menu/repositories/addon_repository.dart';
+import 'package:app_foundation/features/store_menu/repositories/cart_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/foundation.dart';
@@ -12,31 +16,34 @@ part 'drink_event.dart';
 part 'drink_state.dart';
 
 class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
+  final _cartRepo = CartRepository();
+  final _addonRepo = AddonRepository();
   DrinkBloc({required DrinkDetailModel initialModel})
     : super(DrinkLoaded.initial(initialModel)) {
-    on<DrinkEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    //trigger initialization
+
+    //event handlers
+    on<DrinkInitialized>(_onInitiailized);
     on<DrinkSubmit>(onDrinkSubmit);
     on<DrinkUpdateTempLevel>(onUpdateTemp);
     on<DrinkUpdateIceLevel>(onUpdateIce);
     on<DrinkUpdateSugarLevel>(onUpdateSugar);
     on<DrinkUpdateTopping>(
       onUpdateTopping,
-      transformer: (events, mapper) => droppable<DrinkUpdateTopping>().call(
-        events.debounceTime(const Duration(milliseconds: 250)),
-        mapper,
+      transformer: debounceDroppable<DrinkUpdateTopping>(
+        const Duration(milliseconds: 250),
       ),
     );
     on<DrinkUpdateSyrup>(
       onUpdateSyrup,
-      transformer: (events, mapper) => droppable<DrinkUpdateSyrup>().call(
-        events.debounceTime(const Duration(milliseconds: 250)),
-        mapper,
+      transformer: debounceDroppable<DrinkUpdateSyrup>(
+        const Duration(milliseconds: 250),
       ),
     );
     on<DrinkIncrementQuantity>(onIncrement);
     on<DrinkDecrementQuantity>(onDecrement);
+
+    add(DrinkInitialized());
   }
 
   FutureOr<void> onUpdateTemp(
@@ -116,9 +123,25 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
     }
   }
 
-  FutureOr<void> onDrinkSubmit(DrinkSubmit event, Emitter<DrinkState> emit) {
-    final current = state;
-    if (current is DrinkLoaded) {}
+  FutureOr<void> onDrinkSubmit(
+    DrinkSubmit event,
+    Emitter<DrinkState> emit,
+  ) async {
+    final current = state as DrinkLoaded;
+
+    final newDrink = DrinkCartModel.fromBloc(current);
+    var result = false;
+    try {
+      result = await _cartRepo.overWrite(newDrink);
+    } catch (e) {
+      emit(DrinkError(error: '$e'));
+    } finally {
+      if (result) {
+        emit(DrinkSuccess(newDrink: newDrink));
+      } else {
+        emit(DrinkError(error: "Submit Fail!"));
+      }
+    }
   }
 
   FutureOr<void> onDecrement(
@@ -132,5 +155,21 @@ class DrinkBloc extends Bloc<DrinkEvent, DrinkState> {
       );
       emit(current.copyWith(model: updated));
     }
+  }
+
+  FutureOr<void> _onInitiailized(
+    DrinkInitialized event,
+    Emitter<DrinkState> emit,
+  ) async {
+    final current = state as DrinkLoaded;
+    emit(current.copyWith(isAddonLoading: true));
+    final (toppings, syrups) = await _addonRepo.readAll();
+    emit(
+      current.copyWith(
+        availableToppings: toppings,
+        availableSyrups: syrups,
+        isAddonLoading: false,
+      ),
+    );
   }
 }

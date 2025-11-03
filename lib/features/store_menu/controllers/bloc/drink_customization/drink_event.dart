@@ -3,6 +3,7 @@ part of 'drink_bloc.dart';
 @immutable
 sealed class DrinkEvent {}
 
+class DrinkInitialized extends DrinkEvent{}
 class DrinkUpdateIceLevel extends DrinkEvent {
   final String ice;
   DrinkUpdateIceLevel({required this.ice});
@@ -30,12 +31,15 @@ class DrinkUpdateSyrup extends DrinkEvent {
 
 class DrinkSubmit extends DrinkEvent {}
 
-class DrinkIncrementQuantity extends DrinkEvent {
+abstract class DrinkUpdateQuantity extends DrinkEvent {
   final int changes;
-  DrinkIncrementQuantity({required this.changes});
+  DrinkUpdateQuantity({required this.changes});
 }
 
-class DrinkDecrementQuantity extends DrinkEvent {
-  final int changes;
-  DrinkDecrementQuantity({required this.changes});
+class DrinkIncrementQuantity extends DrinkUpdateQuantity {
+  DrinkIncrementQuantity({required super.changes});
+}
+
+class DrinkDecrementQuantity extends DrinkUpdateQuantity {
+  DrinkDecrementQuantity({required super.changes});
 }

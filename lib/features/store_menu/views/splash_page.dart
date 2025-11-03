@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app_foundation/features/store_menu/repositories/database_provider.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -16,8 +17,9 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return; // ensure widget is still in tree
+
+    initDB();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacementNamed(context, '/storemenu');
     });
   }
@@ -30,15 +32,19 @@ class _SplashPageState extends State<SplashPage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-
             children: [
               FlutterLogo(size: 120),
-              SizedBox(height: 8),
+              SizedBox(height: 16),
               CircularProgressIndicator(color: Colors.orange),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void initDB() async {
+    await DatabaseProvider.deleteDatabaseFile();
+    await DatabaseProvider.database;
   }
 }

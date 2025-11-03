@@ -1,5 +1,6 @@
+import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
-import 'package:app_foundation/features/store_menu/models/drink_source.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
 
 extension FromCartX on FromCart {
   DrinkDetailModel toDetailModel() {
@@ -7,7 +8,7 @@ extension FromCartX on FromCart {
     return DrinkDetailModel(
       name: drink.name,
       image: drink.image,
-      basePrice: drink.price,
+      basePrice: drink.basePrice,
       quantity: drink.quantity,
       type: drink.type,
       temp: drink.tempLevel,
@@ -48,6 +49,28 @@ extension BoolDbMapper on bool {
   int toDb() => this ? 1 : 0;
 }
 
-extension IntBoolMapper on int {
-  bool toBool() => this == 1;
+extension IntBoolMapper on Object? {
+  bool toBool() {
+    if (this is int) return (this as int) == 1;
+    if (this is bool) return this as bool;
+    if (this is String) return this == '1' || this == 'true';
+    return false;
+  }
+}
+
+extension CalculateTotalList on List<DrinkCartModel> {
+  int getTotalPrice() =>
+      fold<int>(0, (start, drink) => start + drink.getTotalPrice());
+}
+
+extension SnakeCaseCammelCaseMapper on Map<String, dynamic> {
+  Map<String, dynamic> normalizeKeys(Map<String, dynamic> map) {
+    return map.map((key, value) {
+      final normalizedKey = key.replaceAllMapped(
+        RegExp(r'_([a-z])'),
+        (match) => match.group(1)!.toUpperCase(),
+      );
+      return MapEntry(normalizedKey, value);
+    });
+  }
 }

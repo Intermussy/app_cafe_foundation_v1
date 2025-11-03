@@ -4,7 +4,6 @@ class SingleSelectGrid extends StatefulWidget {
   const SingleSelectGrid({
     super.key,
     required this.levels,
-
     required this.crossAxisCount,
     required this.selected,
     required this.onChanged,
@@ -33,9 +32,8 @@ class _SingleSelectGridState extends State<SingleSelectGrid> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (widget.selected.isNotEmpty) {
-      _selected = widget.selected;
-    }
+
+    _selected = widget.selected;
   }
 
   @override

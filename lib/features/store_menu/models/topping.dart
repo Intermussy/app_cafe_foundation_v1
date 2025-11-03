@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:app_foundation/features/store_menu/models/addon_base.dart';
+import 'package:app_foundation/features/store_menu/models/adapters/addon_base.dart';
 
-class Topping extends AddonItem {
+class Topping extends AddonBase {
   Topping({required super.id, required super.name, required super.price});
 
   static Topping getMockData() {
@@ -33,4 +33,8 @@ class Topping extends AddonItem {
 
   factory Topping.fromJson(String source) =>
       Topping.fromMap(json.decode(source));
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
 }
