@@ -8,12 +8,10 @@ class ItemCartWidget extends StatefulWidget {
   const ItemCartWidget({
     super.key,
     required this.drink,
-    required this.onIncrement,
-    required this.onDecrement,
+    required this.onQuantityChanged,
   });
   final DrinkCartModel drink;
-  final ValueChanged<DrinkCartModel> onIncrement;
-  final ValueChanged<DrinkCartModel> onDecrement;
+  final ValueChanged<DrinkCartModel> onQuantityChanged;
 
   @override
   State<ItemCartWidget> createState() => _ItemCartWidgetState();
@@ -21,11 +19,14 @@ class ItemCartWidget extends StatefulWidget {
 
 class _ItemCartWidgetState extends State<ItemCartWidget> {
   late DrinkCartModel _drink;
+  late int _quantity;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _drink = widget.drink;
+    _quantity = _drink.quantity;
   }
 
   @override
@@ -35,12 +36,11 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
     _drink = widget.drink;
   }
 
-  @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    if (mounted) {
-      super.setState(fn);
-    }
+  onQuanityChanged(int i) {
+    setState(() {
+      _quantity = i;
+    });
+    widget.onQuantityChanged(_drink.copyWith(quantity: _quantity));
   }
 
   @override
@@ -135,10 +135,9 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                             children: [
                               // minus button
                               OutlinedButton(
-                                onPressed: () {
-                                  // TODO: decrease quantity
-                                  setState(() => widget.onDecrement(_drink));
-                                },
+                                onPressed: _quantity > 0
+                                    ? onQuanityChanged(_quantity - 1)
+                                    : null,
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   side: const BorderSide(color: Colors.red),
@@ -157,7 +156,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 12),
                                 child: Text(
-                                  _drink.quantity.toString(),
+                                  _quantity.toString(),
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -167,12 +166,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
 
                               // plus button
                               OutlinedButton(
-                                onPressed: () {
-                                  // TODO: increase quantity
-                                  // TODO:
-
-                                  setState(() => widget.onIncrement(_drink));
-                                },
+                                onPressed: onQuanityChanged(_quantity + 1),
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   side: const BorderSide(color: Colors.red),
@@ -194,7 +188,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                   ),
                 ),
 
-                Image.network(
+                Image.asset(
                   _drink.image,
                   width: 120, // optional
                   fit: BoxFit.cover, // adjust how it fits inside its box

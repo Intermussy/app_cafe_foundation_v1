@@ -5,9 +5,7 @@ import 'package:app_foundation/features/store_menu/views/catalog/auto_scroll_car
 import 'package:app_foundation/features/store_menu/views/catalog/item_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 class StoreMainMenu extends StatefulWidget {
   const StoreMainMenu({super.key});
@@ -68,179 +66,109 @@ class _StoreMainMenuState extends State<StoreMainMenu>
           SystemNavigator.pop();
         }
       },
-      child: BlocProvider(
-        create: (context) => _menuBloc,
-        child: Scaffold(
-          body: RefreshIndicator(
-            onRefresh: () async => _menuBloc.add(LoadMenuEvent()),
-            child: CustomScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  backgroundColor: Colors.white,
-                  elevation: 2,
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: BlocListener<MenuBloc, MenuState>(
-                          listener: (context, state) {
-                            // TODO: implement listener
-                          },
-                          child: TextField(
-                            textInputAction: TextInputAction.search,
-                            onChanged: (value) =>
-                                _menuBloc.add(MenuSeachEvent(query: value)),
-                            decoration: InputDecoration(
-                              hintText: "Search Drinks...",
-                              prefixIcon: const Icon(Icons.search),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 26,
-                              ),
-                            ),
+      child: Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () async => _menuBloc.add(LoadMenuEvent()),
+          child: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                backgroundColor: Colors.white,
+                elevation: 2,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        textInputAction: TextInputAction.search,
+                        decoration: InputDecoration(
+                          hintText: "Search Drinks...",
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 26,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).pushNamed('/shoppingcart');
-                            },
-                            icon: Icon(Icons.shopping_cart),
-                          ),
-                          BlocSelector<MenuBloc, MenuState, String>(
-                            selector: (state) {
-                              return state is MenuLoaded
-                                  ? state.cartCount.toString()
-                                  : '';
-                            },
-                            builder: (context, count) {
-                              if (count == "" || count == "0")
-                                return Container();
-                              return Positioned(
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  constraints: BoxConstraints(
-                                    minHeight: 16,
-                                    minWidth: 16,
-                                  ),
-                                  child: Text(
-                                    count,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: AutoScrollCarousel(),
-                  ),
-                ),
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _sliverTabBarDelegateTab(
-                    tabBar: TabBar(
-                      controller: tabController,
-                      onTap: (value) {
-                        switch (value) {
-                          case 1:
-                            _menuBloc.add(MenuFilterTypeEvent(type: 'coffee'));
-                            break;
-                          case 2:
-                            _menuBloc.add(
-                              MenuFilterTypeEvent(type: 'non-coffee'),
-                            );
-                          default:
-                            _menuBloc.add(MenuFilterTypeEvent(type: 'all'));
-                        }
-                      },
-                      indicatorColor: Colors.red,
-                      labelColor: Colors.red,
-                      unselectedLabelColor: Colors.grey,
-                      tabs: tabs.map((t) => Tab(text: t)).toList(),
                     ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(12),
-                  sliver: SliverToBoxAdapter(
-                    child: BlocConsumer<MenuBloc, MenuState>(
-                      listener: (context, current) {},
-                      buildWhen: (previous, current) {
-                        if (previous is MenuLoaded && current is MenuLoaded) {
-                          return previous.filteredDrinks !=
-                              current.filteredDrinks;
-                        }
-                        return true;
-                      },
-                      builder: (context, state) {
-                        switch (state) {
-                          case MenuLoaded _:
-                            return GridView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: state.filteredDrinks.length,
-                              itemBuilder: (context, index) => ItemMenuWidget(
-                                drink: state.filteredDrinks[index],
+                    const SizedBox(width: 8),
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/shoppingcart');
+                          },
+                          icon: Icon(Icons.shopping_cart),
+                        ),
+                        Positioned(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: BoxConstraints(
+                              minHeight: 16,
+                              minWidth: 16,
+                            ),
+                            child: Text(
+                              '1',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
                               ),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 12,
-                                    crossAxisSpacing: 12,
-                                    childAspectRatio: 0.8,
-                                  ),
-                            );
-
-                          default:
-                            return Skeletonizer(
-                              enabled: state is MenuLoading,
-                              effect: PulseEffect(),
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: 10,
-                                itemBuilder: (_, _) => Bone.square(
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 12,
-                                      crossAxisSpacing: 12,
-                                      childAspectRatio: 0.8,
-                                    ),
-                              ),
-                            );
-                        }
-                      },
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ],
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: AutoScrollCarousel(),
+                ),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _sliverTabBarDelegateTab(
+                  tabBar: TabBar(
+                    controller: tabController,
+                    indicatorColor: Colors.red,
+                    labelColor: Colors.red,
+                    unselectedLabelColor: Colors.grey,
+                    tabs: tabs.map((t) => Tab(text: t)).toList(),
                   ),
                 ),
-              ],
-            ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(12),
+                sliver: SliverToBoxAdapter(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: DrinkCatalogModel.getMockList().length,
+                    itemBuilder: (context, index) => ItemMenuWidget(
+                      drink: DrinkCatalogModel.getMockList()[index],
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.8,
+                        ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

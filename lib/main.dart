@@ -1,10 +1,7 @@
-import 'package:app_foundation/bindings/app_config.dart';
 import 'package:app_foundation/bindings/router/app_router.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  await AppConfig.init();
-
   runApp(MyApp());
 }
 
