@@ -1,5 +1,4 @@
 import 'package:app_foundation/commons/widgets/custom_toast.dart';
-import 'package:app_foundation/features/store_menu/controllers/bloc/menu/menu_bloc.dart';
 import 'package:app_foundation/features/store_menu/models/drink_catalog_model.dart';
 import 'package:app_foundation/features/store_menu/views/catalog/auto_scroll_carousel.dart';
 import 'package:app_foundation/features/store_menu/views/catalog/item_menu_widget.dart';
@@ -16,7 +15,6 @@ class StoreMainMenu extends StatefulWidget {
 
 class _StoreMainMenuState extends State<StoreMainMenu>
     with SingleTickerProviderStateMixin {
-  final _menuBloc = MenuBloc();
   var mockDrinkMenuView = DrinkCatalogModel.getMockList();
   FToast ftoast = FToast();
   late TabController tabController;
@@ -29,14 +27,6 @@ class _StoreMainMenuState extends State<StoreMainMenu>
     super.initState();
     tabController = TabController(length: tabs.length, vsync: this);
     ftoast.init(context);
-    _menuBloc.add(LoadMenuEvent());
-  }
-
-  @override
-  void didUpdateWidget(covariant StoreMainMenu oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    _menuBloc.add(LoadMenuEvent());
   }
 
   @override
@@ -68,7 +58,7 @@ class _StoreMainMenuState extends State<StoreMainMenu>
       },
       child: Scaffold(
         body: RefreshIndicator(
-          onRefresh: () async => _menuBloc.add(LoadMenuEvent()),
+          onRefresh: () async => (),
           child: CustomScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             slivers: [
