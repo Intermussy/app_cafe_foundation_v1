@@ -159,6 +159,7 @@ class _StoreMainMenuState extends State<StoreMainMenu>
                   ),
                 ),
                 SliverPersistentHeader(
+                  pinned: true,
                   delegate: _sliverTabBarDelegateTab(
                     tabBar: TabBar(
                       controller: tabController,
@@ -259,7 +260,7 @@ class _sliverTabBarDelegateTab extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     // TODO: implement build
-    return Container(child: tabBar);
+    return Container(color: Colors.white, child: tabBar);
   }
 
   @override
