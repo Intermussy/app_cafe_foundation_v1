@@ -1,17 +1,12 @@
-import 'package:app_foundation/bindings/app_config.dart';
-import 'package:app_foundation/bindings/router/app_router.dart';
+import 'package:app_foundation/features/store_menu/views/first_page.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  await AppConfig.init();
-
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final AppRouter _appRouter = AppRouter();
-
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -21,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      onGenerateRoute: _appRouter.onGenerateRoute,
+      home: FirstPage(),
     );
   }
 }

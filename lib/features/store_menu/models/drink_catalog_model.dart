@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 
-import 'package:app_foundation/bindings/app_logger.dart';
 import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
 
 class DrinkCatalogModel {
@@ -91,7 +90,6 @@ class DrinkCatalogModel {
   }
 
   factory DrinkCatalogModel.fromDB(DrinkCatalogDB d) {
-    AppLogger().info(d.toMap().toString());
     return DrinkCatalogModel(
       id: d.id,
       name: d.name,
@@ -188,7 +186,6 @@ class DrinkCatalogDB {
   }
 
   factory DrinkCatalogDB.fromMemory(DrinkCatalogModel d) {
-    AppLogger().debug('[CATALOG fromMemory]${d.toMap().toString()}');
     return DrinkCatalogDB(
       id: d.id,
       name: d.name,
