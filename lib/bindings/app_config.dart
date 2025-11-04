@@ -33,7 +33,7 @@ class AppConfig {
       case AppEnv.staging:
         return '.env.staging';
       case AppEnv.prod:
-        return '.env.staging';
+        return '.env.prod';
     }
   }
 
