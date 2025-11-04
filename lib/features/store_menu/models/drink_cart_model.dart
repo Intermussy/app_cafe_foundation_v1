@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:app_foundation/features/store_menu/controllers/bloc/drink_customization/drink_bloc.dart';
 import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
@@ -309,24 +308,5 @@ class DrinkCartModel {
     final timeStampe = DateTime.now().microsecondsSinceEpoch;
     final random = Random().nextInt(900) + 100;
     return int.parse('$timeStampe$random');
-  }
-
-  factory DrinkCartModel.fromBloc(DrinkLoaded d) {
-    return DrinkCartModel(
-      id: d.model.cartId,
-      catalogId: d.model.id,
-      name: d.model.name,
-      basePrice: d.model.basePrice,
-      quantity: d.model.quantity,
-      image: d.model.image,
-      type: d.model.type,
-      tempLevel: d.selectedTemp,
-      sugarLevel: d.selectedSugar,
-      iceLevel: d.selectedIce,
-      toppings: d.selectedToppings,
-      syrups: d.selectedSyrups,
-      canBeHot: d.model.canBeHot,
-      canBeCold: d.model.canBeCold,
-    );
   }
 }

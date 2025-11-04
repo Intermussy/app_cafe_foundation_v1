@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app_foundation/features/store_menu/repositories/database_provider.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -43,8 +42,5 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  void initDB() async {
-    await DatabaseProvider.deleteDatabaseFile();
-    await DatabaseProvider.database;
-  }
+  void initDB() async {}
 }

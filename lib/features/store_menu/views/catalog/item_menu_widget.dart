@@ -1,4 +1,3 @@
-import 'package:app_foundation/bindings/app_logger.dart';
 import 'package:app_foundation/bindings/rupiah_formatter.dart';
 import 'package:app_foundation/features/store_menu/models/drink_catalog_model.dart';
 import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
@@ -17,7 +16,6 @@ class ItemMenuWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: GestureDetector(
         onTap: () {
-          AppLogger().info(drink.toMap().toString());
           Navigator.of(context).pushNamed(
             '/drinkdetail',
             arguments: (FromMenu(menuDrink: drink), false),
@@ -26,7 +24,7 @@ class ItemMenuWidget extends StatelessWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.network(
+              child: Image.asset(
                 drink.image,
                 fit: BoxFit.cover,
                 width: double.infinity,
