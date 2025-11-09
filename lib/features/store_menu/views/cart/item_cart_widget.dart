@@ -26,21 +26,24 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
     // TODO: implement initState
     super.initState();
     _drink = widget.drink;
-    _quantity = _drink.quantity;
+    _quantity = widget.drink.quantity;
   }
 
   @override
   void didUpdateWidget(covariant ItemCartWidget oldWidget) {
     // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
-    _drink = widget.drink;
+    if (oldWidget.drink != widget.drink) {
+      _drink = widget.drink;
+      _quantity = widget.drink.quantity;
+    }
   }
 
-  onQuanityChanged(int i) {
+  void onQuantityChanged(int i) {
     setState(() {
       _quantity = i;
+      widget.onQuantityChanged(_drink.copyWith(quantity: _quantity));
     });
-    widget.onQuantityChanged(_drink.copyWith(quantity: _quantity));
   }
 
   @override
@@ -135,9 +138,11 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                             children: [
                               // minus button
                               OutlinedButton(
-                                onPressed: _quantity > 0
-                                    ? onQuanityChanged(_quantity - 1)
-                                    : null,
+                                onPressed: () {
+                                  if (_quantity > 1) {
+                                    onQuantityChanged(_quantity - 1);
+                                  }
+                                },
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   side: const BorderSide(color: Colors.red),
@@ -156,7 +161,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 12),
                                 child: Text(
-                                  _quantity.toString(),
+                                  "$_quantity",
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -166,7 +171,8 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
 
                               // plus button
                               OutlinedButton(
-                                onPressed: onQuanityChanged(_quantity + 1),
+                                onPressed: () =>
+                                    onQuantityChanged(_quantity + 1),
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   side: const BorderSide(color: Colors.red),
