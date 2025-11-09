@@ -1,16 +1,10 @@
-# app_foundation
+# Cafe App
 
-A new Flutter project.
+## How to run App
 
-## Getting Started
+### day 1
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. Go to branch 'day1_finished'
+2. git pull
+3. open repo and run pubspec.yaml
+4. run main.dart
