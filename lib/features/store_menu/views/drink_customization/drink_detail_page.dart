@@ -27,7 +27,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
   List<String> iceLevel = ["normal", "less", "none"];
   List<String> tempLevel = ["hot", "cold"];
   FToast fToast = FToast();
-
+  late int quantity;
   late DrinkDetailModel model;
 
   String selectedTemp = '';
@@ -53,6 +53,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
 
     if (src is FromCart) {
       model = src.toDetailModel();
+      quantity = model.quantity;
       if (!model.canBeCold) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
@@ -62,6 +63,7 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
       }
     } else if (src is FromMenu) {
       model = src.toDetailModel();
+      quantity = model.quantity;
 
       if (!model.canBeCold) {
         iceLevel = ["none"];
@@ -88,13 +90,19 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: PriceConfirmationWidget(
-        totalPrice: model.getTotalPrice(),
-        quantity: model.quantity,
-        onSubmit: () {},
-        onDecrement: (s) {
-          if (model.quantity > 1) {}
+        totalPrice: getTotalPrice(),
+        quantity: quantity,
+        onSubmit: () {
+          Navigator.of(context).pop();
         },
-        onIncrement: (s) {},
+        onDecrement: (s) {
+          if (quantity > 1) {
+            setState(() => quantity = quantity - 1);
+          }
+        },
+        onIncrement: (s) {
+          setState(() => quantity = quantity + 1);
+        },
       ),
       body: CustomScrollView(
         slivers: [
@@ -163,7 +171,11 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
               maxSelection: 2,
               selected: selectedToppings,
               items: Topping.getMockList(),
-              onChanged: (val) {},
+              onChanged: (val) {
+                setState(() {
+                  selectedToppings = val;
+                });
+              },
               label: 'Topping',
             ),
           ),
@@ -172,7 +184,11 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
               maxSelection: 2,
               selected: selectedSyrup,
               items: Syrup.getMockList(),
-              onChanged: (val) {},
+              onChanged: (val) {
+                setState(() {
+                  selectedSyrup = val;
+                });
+              },
               label: 'Syrup',
             ),
           ),
@@ -181,5 +197,12 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
         ],
       ),
     );
+  }
+
+  int getTotalPrice() {
+    return (model.basePrice +
+            selectedToppings.fold<int>(0, (start, t) => start + t.price) +
+            selectedSyrup.fold<int>(0, (start, s) => start + s.price)) *
+        quantity;
   }
 }

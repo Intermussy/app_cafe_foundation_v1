@@ -12,6 +12,7 @@ class _TotalPriceLabelState extends State<TotalPriceLabel> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Divider(thickness: 5, color: Colors.grey),
         Row(

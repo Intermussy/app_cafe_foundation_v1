@@ -121,8 +121,8 @@ class _StoreMainMenuState extends State<StoreMainMenu>
                 ),
               ),
               SliverToBoxAdapter(
-                child: AspectRatio(
-                  aspectRatio: 16 / 9,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 200),
                   child: AutoScrollCarousel(),
                 ),
               ),

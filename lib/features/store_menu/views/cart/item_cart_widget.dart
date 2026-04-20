@@ -159,7 +159,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
 
                               // quantity text
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
+                                padding: EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
                                   "$_quantity",
                                   style: TextStyle(
