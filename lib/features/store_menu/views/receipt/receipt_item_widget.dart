@@ -16,7 +16,15 @@ class ReceiptItemWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(children: [Text(item.name), Text(item.tempLevel)]),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  "${item.tempLevel}, ${item.iceLevel} ice, ${item.sugarLevel} sugar",
+                ),
+              ],
+            ),
             Text(RupiahFormatter.withRupiah(item.getTotalPrice())),
           ],
         ),
