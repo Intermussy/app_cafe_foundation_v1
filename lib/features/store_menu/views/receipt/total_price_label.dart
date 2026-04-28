@@ -18,8 +18,11 @@ class _TotalPriceLabelState extends State<TotalPriceLabel> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('total: '),
-            Text(RupiahFormatter.withRupiah(widget.total)),
+            Text('Total: ', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              RupiahFormatter.withRupiah(widget.total),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ],
