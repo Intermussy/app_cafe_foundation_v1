@@ -57,12 +57,10 @@ class OrderReceiptPage extends StatelessWidget {
                             ),
                           ),
 
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: TotalPriceLabel(
-                                total: drinks.getTotalPrice(),
-                              ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TotalPriceLabel(
+                              total: drinks.getTotalPrice(),
                             ),
                           ),
                         ],
