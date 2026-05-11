@@ -138,10 +138,7 @@ class _CartListPageState extends State<CartListPage> {
               }
             },
             buildWhen: (previous, current) {
-              if (previous is CartLoaded && current is CartLoaded) {
-                return previous.cart == current.cart;
-              }
-              return true;
+              return current is CartLoaded;
             },
             builder: (context, state) {
               switch (state) {
@@ -157,20 +154,9 @@ class _CartListPageState extends State<CartListPage> {
                         itemCount: state.cart.length,
                         itemBuilder: (context, index) {
                           final drink = state.cart[index];
-                          return ItemCartWidget(
-                            drink: drink,
-                            onIncrement: (DrinkCartModel val) {
-                              _cartBloc.add(IncrementCart(drink: val));
-                              _cartBloc.add(RequestCartEvent());
-                            },
-                            onDecrement: (DrinkCartModel val) {
-                              if (val.quantity > 1) {
-                                _cartBloc.add(DecrementCart(drink: val));
-                              } else if (val.quantity == 0) {
-                                _cartBloc.add(CartAbort(item: val));
-                              }
-                              _cartBloc.add(RequestCartEvent());
-                            },
+                          return CartItemSelector(
+                            key: ValueKey(drink.id),
+                            itemId: drink.id,
                           );
                         },
                       ),

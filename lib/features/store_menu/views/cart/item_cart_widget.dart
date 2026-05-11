@@ -1,10 +1,45 @@
 import 'package:app_foundation/bindings/rupiah_formatter.dart';
+import 'package:app_foundation/features/store_menu/controllers/bloc/cart/cart_bloc.dart';
 import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ItemCartWidget extends StatefulWidget {
+class CartItemSelector extends StatelessWidget {
+  CartItemSelector({super.key, required this.itemId});
+  final int itemId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<CartBloc, CartState, DrinkCartModel>(
+      selector: (state) {
+        final cart = (state as CartLoaded).cart;
+
+        // This is SAFE because ListView guarantees existence
+        return cart.firstWhere((e) => e.id == itemId);
+      },
+      builder: (context, drink) {
+        return ItemCartWidget(
+          key: ValueKey(drink.id),
+          drink: drink,
+          onIncrement: (val) {
+            context.read<CartBloc>().add(IncrementCart(drink: val));
+          },
+          onDecrement: (val) {
+            if (val.quantity > 1) {
+              context.read<CartBloc>().add(DecrementCart(drink: val));
+            } else {
+              context.read<CartBloc>().add(CartAbort(item: val));
+            }
+          },
+        );
+      },
+    );
+  }
+}
+
+class ItemCartWidget extends StatelessWidget {
   const ItemCartWidget({
     super.key,
     required this.drink,
@@ -14,34 +49,6 @@ class ItemCartWidget extends StatefulWidget {
   final DrinkCartModel drink;
   final ValueChanged<DrinkCartModel> onIncrement;
   final ValueChanged<DrinkCartModel> onDecrement;
-
-  @override
-  State<ItemCartWidget> createState() => _ItemCartWidgetState();
-}
-
-class _ItemCartWidgetState extends State<ItemCartWidget> {
-  late DrinkCartModel _drink;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _drink = widget.drink;
-  }
-
-  @override
-  void didUpdateWidget(covariant ItemCartWidget oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-    _drink = widget.drink;
-  }
-
-  @override
-  void setState(VoidCallback fn) {
-    // TODO: implement setState
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +80,14 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _drink.name,
+                        drink.name,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        RupiahFormatter.withRupiah(_drink.getTotalPrice()),
+                        RupiahFormatter.withRupiah(drink.getTotalPrice()),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.normal,
@@ -97,11 +104,10 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                                   .pushNamed<DrinkCartModel>(
                                     '/drinkdetail',
                                     arguments: (
-                                      FromCart(cartDrink: _drink),
+                                      FromCart(cartDrink: drink),
                                       true,
                                     ),
                                   );
-                              if (!mounted) return;
                               if (newDrink != null) {}
                             },
                             icon: const Icon(
@@ -137,7 +143,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                               OutlinedButton(
                                 onPressed: () {
                                   // TODO: decrease quantity
-                                  setState(() => widget.onDecrement(_drink));
+                                  onDecrement(drink);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
@@ -146,8 +152,10 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                                   visualDensity: VisualDensity.compact,
                                   minimumSize: const Size(28, 28),
                                 ),
-                                child: const Icon(
-                                  Icons.remove,
+                                child: Icon(
+                                  drink.quantity == 1
+                                      ? Icons.delete_outline
+                                      : Icons.remove,
                                   color: Colors.red,
                                   size: 14,
                                 ),
@@ -157,7 +165,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 6),
                                 child: Text(
-                                  _drink.quantity.toString(),
+                                  drink.quantity.toString(),
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -171,7 +179,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                                   // TODO: increase quantity
                                   // TODO:
 
-                                  setState(() => widget.onIncrement(_drink));
+                                  onIncrement(drink);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   shape: const CircleBorder(),
@@ -195,7 +203,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                 ),
 
                 Image.network(
-                  _drink.image,
+                  drink.image,
                   width: 120, // optional
                   fit: BoxFit.cover, // adjust how it fits inside its box
                 ),

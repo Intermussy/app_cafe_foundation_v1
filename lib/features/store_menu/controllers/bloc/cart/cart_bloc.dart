@@ -14,16 +14,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepository _repo = CartRepository();
 
   CartBloc() : super(CartInitial()) {
-    on<RequestCartEvent>(requestCartEvent);
-    on<UpdateCartQuantity>(
-      updateQuantity,
-      transformer: debounceDroppable<UpdateCartQuantity>(
-        const Duration(milliseconds: 250),
-      ),
-    );
-    on<WriteToDB>(updateToDB);
+    on<RequestCartEvent>(requestCartEvent, transformer: sequential());
+    on<UpdateCartQuantity>(updateQuantity);
+    on<WriteToDB>(updateToDB, transformer: sequential());
     on<SubmitCartEvent>(submitCart);
-    on<CartAbort>(onAbortCart);
+    on<CartAbort>(onAbortCart, transformer: sequential());
   }
 
   Future<void> requestCartEvent(
@@ -79,5 +74,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     await _repo.overWriteAll(event.updatedCart);
   }
 
-  FutureOr<void> onAbortCart(CartAbort event, Emitter<CartState> emit) {}
+  FutureOr<void> onAbortCart(CartAbort event, Emitter<CartState> emit) async {
+    await _repo.removeById(id: event.item.id);
+    add(RequestCartEvent());
+  }
 }

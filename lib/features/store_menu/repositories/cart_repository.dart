@@ -160,6 +160,28 @@ class CartRepository {
     return hydrated;
   }
 
+  Future<void> removeById({required int id}) async {
+    final db = await DatabaseProvider.database;
+    try {
+      await db.transaction((txn) async {
+        await txn.delete(
+          'cart_drink_toppings',
+          where: 'cart_drink_id = ?',
+          whereArgs: [id],
+        );
+        await txn.delete(
+          'cart_drink_syrups',
+          where: 'cart_drink_id = ?',
+          whereArgs: [id],
+        );
+        await txn.delete('cart_drinks', where: 'id = ?', whereArgs: [id]);
+      });
+      _logger.info("[CART REPO] delete successful");
+    } catch (e) {
+      _logger.error("[CART REPO] ${e.toString}");
+    }
+  }
+
   Future<void> clearAll() async {
     final db = await DatabaseProvider.database;
     db.transaction((txt) async {
