@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
+import 'package:app_foundation/features/store_menu/models/drink_base_model.dart';
 import 'package:app_foundation/features/store_menu/models/drink_detail_model.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
@@ -48,8 +49,8 @@ class DrinkCartDB {
       temp_level: drink.tempLevel,
       sugar_level: drink.sugarLevel,
       ice_level: drink.iceLevel,
-      can_be_hot: drink.canBeHot.toDb(),
-      can_be_cold: drink.canBeCold.toDb(),
+      can_be_hot: drink.hotAvailable.toDb(),
+      can_be_cold: drink.iceAvailable.toDb(),
     );
   }
 
@@ -95,36 +96,31 @@ class DrinkCartDB {
       DrinkCartDB.fromMap(json.decode(source));
 }
 
-class DrinkCartModel {
+class DrinkCartModel extends DrinkBaseModel {
   final int id;
   final int catalogId;
-  final String name;
-  final int basePrice;
   final int quantity;
-  final String image;
-  final String type;
   final String tempLevel;
   final String sugarLevel;
   final String iceLevel;
   final List<Topping> toppings;
   final List<Syrup> syrups;
-  final bool canBeHot;
-  final bool canBeCold;
+
   DrinkCartModel({
     int? id,
+    required super.name,
+    required super.basePrice,
+    required super.image,
+    required super.iceAvailable,
+    required super.hotAvailable,
+    required super.type,
     required this.catalogId,
-    required this.name,
-    required this.basePrice,
     required this.quantity,
-    required this.image,
-    required this.type,
+    required this.toppings,
+    required this.syrups,
     required this.tempLevel,
     required this.sugarLevel,
     required this.iceLevel,
-    required this.toppings,
-    required this.syrups,
-    required this.canBeHot,
-    required this.canBeCold,
   }) : id = id ?? generateUniqueId();
 
   int getTotalPrice() {
@@ -148,16 +144,16 @@ class DrinkCartModel {
         iceLevel: 'none',
         toppings: [],
         syrups: [],
-        canBeHot: true,
-        canBeCold: true,
+        hotAvailable: true,
+        iceAvailable: true,
       ),
       DrinkCartModel(
         name: "Babycchino",
         basePrice: 20000,
         quantity: 1,
         image: 'assets/images/placeholder.png',
-        canBeHot: true,
-        canBeCold: false,
+        hotAvailable: true,
+        iceAvailable: false,
         tempLevel: 'hot',
         type: 'coffee',
         id: 123,
@@ -172,8 +168,8 @@ class DrinkCartModel {
         basePrice: 24000,
         quantity: 1,
         image: 'assets/images/placeholder.png',
-        canBeHot: false,
-        canBeCold: true,
+        hotAvailable: false,
+        iceAvailable: true,
         tempLevel: 'cold',
         type: 'non-cofee',
         id: 123,
@@ -190,7 +186,7 @@ class DrinkCartModel {
     int? id,
     int? catalogId,
     String? name,
-    int? price,
+    int? basePrice,
     int? quantity,
     String? image,
     String? type,
@@ -199,14 +195,14 @@ class DrinkCartModel {
     String? iceLevel,
     List<Topping>? toppings,
     List<Syrup>? syrups,
-    bool? canBeHot,
-    bool? canBeCold,
+    bool? hotAvailable,
+    bool? iceAvailable,
   }) {
     return DrinkCartModel(
       id: id ?? this.id,
       catalogId: catalogId ?? this.catalogId,
       name: name ?? this.name,
-      basePrice: price ?? this.basePrice,
+      basePrice: basePrice ?? this.basePrice,
       quantity: quantity ?? this.quantity,
       image: image ?? this.image,
       type: type ?? this.type,
@@ -215,8 +211,8 @@ class DrinkCartModel {
       iceLevel: iceLevel ?? this.iceLevel,
       toppings: toppings ?? this.toppings,
       syrups: syrups ?? this.syrups,
-      canBeHot: canBeHot ?? this.canBeHot,
-      canBeCold: canBeCold ?? this.canBeCold,
+      hotAvailable: hotAvailable ?? this.hotAvailable,
+      iceAvailable: iceAvailable ?? this.iceAvailable,
     );
   }
 
@@ -235,8 +231,8 @@ class DrinkCartModel {
     result.addAll({'ice_level': iceLevel});
     result.addAll({'toppings': toppings.map((x) => x.toMap()).toList()});
     result.addAll({'syrups': syrups.map((x) => x.toMap()).toList()});
-    result.addAll({'can_be_hot': canBeHot});
-    result.addAll({'can_be_cold': canBeCold});
+    result.addAll({'hot_available': hotAvailable});
+    result.addAll({'ice_available': iceAvailable});
 
     return result;
   }
@@ -257,8 +253,8 @@ class DrinkCartModel {
         map['toppings']?.map((x) => Topping.fromMap(x)),
       ),
       syrups: List<Syrup>.from(map['syrups']?.map((x) => Syrup.fromMap(x))),
-      canBeHot: map['can_be_hot'] ?? false,
-      canBeCold: map['can_be_cold'] ?? false,
+      hotAvailable: map['hot_available'] ?? false,
+      iceAvailable: map['ice_available'] ?? false,
     );
   }
 
@@ -281,26 +277,26 @@ class DrinkCartModel {
       iceLevel: d.ice_level,
       toppings: t,
       syrups: s,
-      canBeHot: d.can_be_hot.toBool(),
-      canBeCold: d.can_be_cold.toBool(),
+      hotAvailable: d.can_be_hot.toBool(),
+      iceAvailable: d.can_be_cold.toBool(),
     );
   }
   factory DrinkCartModel.initial(DrinkDetailModel d) {
     return DrinkCartModel(
       id: d.cartId ?? 0,
-      catalogId: d.id,
+      catalogId: d.catalogId,
       name: d.name,
       basePrice: d.basePrice,
       quantity: d.quantity,
       image: d.image,
       type: d.type,
-      tempLevel: d.canBeHot ? 'hot' : 'cold',
+      tempLevel: d.hotAvailable ? 'hot' : 'cold',
       sugarLevel: 'normal',
-      iceLevel: d.canBeCold ? 'normal' : 'none',
+      iceLevel: d.iceAvailable ? 'normal' : 'none',
       toppings: [],
       syrups: [],
-      canBeHot: d.canBeHot,
-      canBeCold: d.canBeCold,
+      hotAvailable: d.hotAvailable,
+      iceAvailable: d.iceAvailable,
     );
   }
 

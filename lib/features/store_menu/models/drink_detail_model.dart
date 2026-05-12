@@ -1,34 +1,30 @@
+import 'package:app_foundation/features/store_menu/models/drink_base_model.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
 
-class DrinkDetailModel {
-  final int id;
+class DrinkDetailModel extends DrinkBaseModel {
   final int? cartId;
-  final String name;
-  final String image;
-  final int basePrice;
+  final int catalogId;
   final int quantity;
-  final String type;
-  final String temp;
-  final String sugar;
-  final String ice;
+  final String tempLevel;
+  final String sugarLevel;
+  final String iceLevel;
   final List<Topping> toppings;
   final List<Syrup> syrups;
-  final bool canBeHot;
-  final bool canBeCold;
+
   DrinkDetailModel({
-    required this.temp,
-    required this.id,
     this.cartId,
-    required this.name,
-    required this.image,
-    required this.basePrice,
+    required super.name,
+    required super.basePrice,
+    required super.image,
+    required super.iceAvailable,
+    required super.hotAvailable,
+    required super.type,
+    required this.catalogId,
+    required this.tempLevel,
+    required this.sugarLevel,
+    required this.iceLevel,
     required this.quantity,
-    required this.type,
-    required this.ice,
-    required this.sugar,
-    required this.canBeHot,
-    required this.canBeCold,
     required this.toppings,
     required this.syrups,
   });
@@ -43,41 +39,36 @@ class DrinkDetailModel {
   }
 
   DrinkDetailModel copyWith({
-    int? id,
     int? cartId,
+    int? catalogId,
     String? name,
-    String? image,
     int? basePrice,
-    int? quantity,
+    String? image,
+    bool? iceAvailable,
+    bool? hotAvailable,
     String? type,
-    String? ice,
-    String? sugar,
+    int? quantity,
+    String? tempLevel,
+    String? sugarLevel,
+    String? iceLevel,
     List<Topping>? toppings,
     List<Syrup>? syrups,
-    bool? canBeHot,
-    bool? canBeCold,
-    String? temp,
   }) {
     return DrinkDetailModel(
-      id: id ?? this.id,
       cartId: cartId ?? this.cartId,
+      catalogId: catalogId ?? this.catalogId,
       name: name ?? this.name,
-      image: image ?? this.image,
       basePrice: basePrice ?? this.basePrice,
+      image: image ?? this.image,
+      iceAvailable: iceAvailable ?? this.iceAvailable,
+      hotAvailable: hotAvailable ?? this.hotAvailable,
+      type: '',
       quantity: quantity ?? this.quantity,
-      type: type ?? this.type,
-      temp: temp ?? this.temp,
-      ice: ice ?? this.ice,
-      sugar: sugar ?? this.sugar,
+      tempLevel: tempLevel ?? this.tempLevel,
+      sugarLevel: sugarLevel ?? this.sugarLevel,
+      iceLevel: iceLevel ?? this.iceLevel,
       toppings: toppings ?? this.toppings,
       syrups: syrups ?? this.syrups,
-      canBeHot: canBeHot ?? this.canBeHot,
-      canBeCold: canBeCold ?? this.canBeCold,
     );
-  }
-
-  @override
-  String toString() {
-    return 'DrinkDetailModel(id: $id, cartId: $cartId, name: $name, image: $image, basePrice: $basePrice, quantity: $quantity, type: $type, temp: $temp, sugar: $sugar, ice: $ice, toppings: $toppings, syrups: $syrups, canBeHot: $canBeHot, canBeCold: $canBeCold)';
   }
 }

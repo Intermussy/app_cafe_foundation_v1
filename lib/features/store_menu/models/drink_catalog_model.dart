@@ -3,63 +3,49 @@
 import 'dart:convert';
 
 import 'package:app_foundation/features/store_menu/models/adapters/drink_mapper.dart';
+import 'package:app_foundation/features/store_menu/models/drink_base_model.dart';
 
-class DrinkCatalogModel {
+class DrinkCatalogModel extends DrinkBaseModel {
   final int id;
-  final String name;
-  final int price;
-  final String image;
-  final bool iceAvailable;
-  final bool hotAvailable;
-  final bool regularSizeAvailable;
-  final bool largeSizeAvailable;
-  final String type;
-
   DrinkCatalogModel({
     required this.id,
-    required this.name,
-    required this.price,
-    required this.image,
-    required this.iceAvailable,
-    required this.hotAvailable,
-    required this.regularSizeAvailable,
-    required this.largeSizeAvailable,
-    required this.type,
+    required super.name,
+    required super.basePrice,
+    required super.image,
+    required super.iceAvailable,
+    required super.hotAvailable,
+    required super.type,
   });
-
   static List<DrinkCatalogModel> getMockList() {
     return [
       DrinkCatalogModel(
         id: 1,
         name: 'Cappucino',
-        price: 20000,
+        basePrice: 20000,
         image: 'assets/images/placeholder.png',
         iceAvailable: true,
         hotAvailable: true,
-        regularSizeAvailable: true,
-        largeSizeAvailable: true,
+
         type: 'Coffee',
       ),
       DrinkCatalogModel(
         id: 2,
         name: 'Pistachio',
-        price: 32000,
+        basePrice: 32000,
         image: 'assets/images/placeholder.png',
         iceAvailable: true,
         hotAvailable: true,
-        regularSizeAvailable: true,
-        largeSizeAvailable: false,
+
         type: 'Coffee',
       ),
       DrinkCatalogModel(
         id: 3,
         name: 'Vanilla Frappe',
-        price: 24000,
+        basePrice: 24000,
         image: 'assets/images/placeholder.png',
         iceAvailable: true,
         hotAvailable: false,
-        regularSizeAvailable: true,
-        largeSizeAvailable: false,
+
         type: 'Non-coffee',
       ),
     ];
@@ -68,7 +54,7 @@ class DrinkCatalogModel {
   DrinkCatalogModel copyWith({
     int? id,
     String? name,
-    int? price,
+    int? basePrice,
     String? image,
     bool? iceAvailable,
     bool? hotAvailable,
@@ -79,12 +65,11 @@ class DrinkCatalogModel {
     return DrinkCatalogModel(
       id: id ?? this.id,
       name: name ?? this.name,
-      price: price ?? this.price,
+      basePrice: basePrice ?? this.basePrice,
       image: image ?? this.image,
       iceAvailable: iceAvailable ?? this.iceAvailable,
       hotAvailable: hotAvailable ?? this.hotAvailable,
-      regularSizeAvailable: regularSizeAvailable ?? this.regularSizeAvailable,
-      largeSizeAvailable: largeSizeAvailable ?? this.largeSizeAvailable,
+
       type: type ?? this.type,
     );
   }
@@ -93,12 +78,11 @@ class DrinkCatalogModel {
     return DrinkCatalogModel(
       id: d.id,
       name: d.name,
-      price: d.price,
+      basePrice: d.basePrice,
       image: d.image,
       iceAvailable: d.ice_available.toBool(),
       hotAvailable: d.hot_available.toBool(),
-      regularSizeAvailable: d.regular_size_available.toBool(),
-      largeSizeAvailable: d.large_size_available.toBool(),
+
       type: d.type,
     );
   }
@@ -108,12 +92,11 @@ class DrinkCatalogModel {
 
     result.addAll({'id': id});
     result.addAll({'name': name});
-    result.addAll({'price': price});
+    result.addAll({'basePrice': basePrice});
     result.addAll({'image': image});
     result.addAll({'iceAvailable': iceAvailable});
     result.addAll({'hotAvailable': hotAvailable});
-    result.addAll({'regularSizeAvailable': regularSizeAvailable});
-    result.addAll({'largeSizeAvailable': largeSizeAvailable});
+
     result.addAll({'type': type});
 
     return result;
@@ -123,12 +106,11 @@ class DrinkCatalogModel {
     return DrinkCatalogModel(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
-      price: map['price']?.toInt() ?? 0,
+      basePrice: map['basePrice']?.toInt() ?? 0,
       image: map['image'] ?? '',
       iceAvailable: map['ice_available'] ?? false,
       hotAvailable: map['hot_available'] ?? false,
-      regularSizeAvailable: map['regular_size_available'] ?? false,
-      largeSizeAvailable: map['large_size_available'] ?? false,
+
       type: map['type'] ?? '',
     );
   }
@@ -142,29 +124,26 @@ class DrinkCatalogModel {
 class DrinkCatalogDB {
   final int id;
   final String name;
-  final int price;
+  final int basePrice;
   final String image;
   final int ice_available;
   final int hot_available;
-  final int regular_size_available;
-  final int large_size_available;
   final String type;
   DrinkCatalogDB({
     required this.id,
     required this.name,
-    required this.price,
+    required this.basePrice,
     required this.image,
     required this.ice_available,
     required this.hot_available,
-    required this.regular_size_available,
-    required this.large_size_available,
+
     required this.type,
   });
 
   DrinkCatalogDB copyWith({
     int? id,
     String? name,
-    int? price,
+    int? basePrice,
     String? image,
     int? iceAvailable,
     int? hotAvailable,
@@ -175,12 +154,11 @@ class DrinkCatalogDB {
     return DrinkCatalogDB(
       id: id ?? this.id,
       name: name ?? this.name,
-      price: price ?? this.price,
+      basePrice: basePrice ?? this.basePrice,
       image: image ?? this.image,
       ice_available: iceAvailable ?? ice_available,
       hot_available: hotAvailable ?? hot_available,
-      regular_size_available: regularSizeAvailable ?? regular_size_available,
-      large_size_available: largeSizeAvailable ?? large_size_available,
+
       type: type ?? this.type,
     );
   }
@@ -189,12 +167,11 @@ class DrinkCatalogDB {
     return DrinkCatalogDB(
       id: d.id,
       name: d.name,
-      price: d.price,
+      basePrice: d.basePrice,
       image: d.image,
       ice_available: d.iceAvailable.toDb(),
       hot_available: d.hotAvailable.toDb(),
-      regular_size_available: d.regularSizeAvailable.toDb(),
-      large_size_available: d.largeSizeAvailable.toDb(),
+
       type: d.type,
     );
   }
@@ -204,12 +181,11 @@ class DrinkCatalogDB {
 
     result.addAll({'id': id});
     result.addAll({'name': name});
-    result.addAll({'price': price});
+    result.addAll({'basePrice': basePrice});
     result.addAll({'image': image});
     result.addAll({'ice_available': ice_available});
     result.addAll({'hot_available': hot_available});
-    result.addAll({'regular_size_available': regular_size_available});
-    result.addAll({'large_size_available': large_size_available});
+
     result.addAll({'type': type});
 
     return result;
@@ -219,12 +195,11 @@ class DrinkCatalogDB {
     return DrinkCatalogDB(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
-      price: map['price']?.toInt() ?? 0,
+      basePrice: map['basePrice']?.toInt() ?? 0,
       image: map['image'] ?? '',
       ice_available: map['ice_available']?.toInt() ?? 0,
       hot_available: map['hot_available']?.toInt() ?? 0,
-      regular_size_available: map['regular_size_available']?.toInt() ?? 0,
-      large_size_available: map['large_size_available']?.toInt() ?? 0,
+
       type: map['type'] ?? '',
     );
   }
