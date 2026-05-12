@@ -54,22 +54,22 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
     if (src is FromCart) {
       model = src.toDetailModel();
       quantity = model.quantity;
-      if (!model.canBeCold) {
+      if (!model.iceAvailable) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
       }
-      if (!model.canBeHot) {
+      if (!model.hotAvailable) {
         tempLevel = ["cold"];
       }
     } else if (src is FromMenu) {
       model = src.toDetailModel();
       quantity = model.quantity;
 
-      if (!model.canBeCold) {
+      if (!model.iceAvailable) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
       }
-      if (!model.canBeHot) {
+      if (!model.hotAvailable) {
         tempLevel = ["cold"];
       }
     } else {

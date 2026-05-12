@@ -52,7 +52,7 @@ class ItemMenuWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    RupiahFormatter.withRupiah(drink.price),
+                    RupiahFormatter.withRupiah(drink.basePrice),
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
