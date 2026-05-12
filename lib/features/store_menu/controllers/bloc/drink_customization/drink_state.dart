@@ -45,9 +45,9 @@ class DrinkLoaded extends DrinkState {
     if (model.cartId != null) {
       return DrinkLoaded(
         model: model,
-        selectedSugar: model.sugar,
-        selectedIce: model.ice,
-        selectedTemp: model.temp,
+        selectedSugar: model.sugarLevel,
+        selectedIce: model.iceLevel,
+        selectedTemp: model.tempLevel,
         selectedToppings: model.toppings,
         selectedSyrups: model.syrups,
         totalPrice: model.getTotalPrice(),
@@ -58,10 +58,10 @@ class DrinkLoaded extends DrinkState {
       return DrinkLoaded(
         model: model,
         selectedSugar: 'normal',
-        selectedIce: model.canBeCold ? 'normal' : 'none',
-        selectedTemp: model.canBeHot
+        selectedIce: model.iceAvailable ? 'normal' : 'none',
+        selectedTemp: model.hotAvailable
             ? 'hot'
-            : (model.canBeCold ? 'cold' : 'hot'),
+            : (model.iceAvailable ? 'cold' : 'hot'),
         selectedToppings: model.toppings,
         selectedSyrups: model.syrups,
         totalPrice: model.getTotalPrice(),

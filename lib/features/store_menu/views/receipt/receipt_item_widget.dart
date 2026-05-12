@@ -19,7 +19,10 @@ class ReceiptItemWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  "${item.name}  x${item.quantity}",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 Text(
                   "${item.tempLevel}, ${item.iceLevel} ice, ${item.sugarLevel} sugar",
                 ),

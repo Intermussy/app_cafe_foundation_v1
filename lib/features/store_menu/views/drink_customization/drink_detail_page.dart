@@ -52,11 +52,11 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
       model = src.toDetailModel();
       AppLogger().debug(model.toString());
       _drinkBloc = DrinkBloc(initialModel: model);
-      if (!model.canBeCold) {
+      if (!model.iceAvailable) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
       }
-      if (!model.canBeHot) {
+      if (!model.hotAvailable) {
         tempLevel = ["cold"];
       }
     } else if (src is FromMenu) {
@@ -64,11 +64,11 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
       AppLogger().debug(model.toString());
 
       _drinkBloc = DrinkBloc(initialModel: model);
-      if (!model.canBeCold) {
+      if (!model.iceAvailable) {
         iceLevel = ["none"];
         tempLevel = ["hot"];
       }
-      if (!model.canBeHot) {
+      if (!model.hotAvailable) {
         tempLevel = ["cold"];
       }
     } else {
@@ -215,7 +215,8 @@ class _DrinkDetailPageState extends State<DrinkDetailPage> {
                 },
                 builder: (context, state) {
                   if (state is DrinkLoaded) {
-                    if (state.selectedTemp == 'cold' && state.model.canBeCold) {
+                    if (state.selectedTemp == 'cold' &&
+                        state.model.iceAvailable) {
                       return SingleSelectGrid(
                         label: 'Ice Level',
                         levels: iceLevel,

@@ -22,9 +22,7 @@ CREATE TABLE IF NOT EXISTS catalog_cache (
   price INTEGER NOT NULL,
   ice_available INTEGER NOT NULL CHECK(ice_available IN (0,1)),
   hot_available INTEGER NOT NULL CHECK(hot_available IN (0,1)),
-  type TEXT NOT NULL,
-  regular_size_available INTEGER NOT NULL CHECK(regular_size_available IN (0,1)), 
-  large_size_available INTEGER NOT NULL CHECK(large_size_available IN (0,1))
+  type TEXT NOT NULL
 );
 
 -- create toppings table

@@ -7,19 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartItemSelector extends StatelessWidget {
-  CartItemSelector({super.key, required this.itemId});
+  const CartItemSelector({super.key, required this.itemId});
   final int itemId;
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<CartBloc, CartState, DrinkCartModel>(
+    return BlocSelector<CartBloc, CartState, DrinkCartModel?>(
       selector: (state) {
-        final cart = (state as CartLoaded).cart;
+        if (state is! CartLoaded) {
+          return null;
+        }
 
-        // This is SAFE because ListView guarantees existence
-        return cart.firstWhere((e) => e.id == itemId);
+        return state.cart.firstWhere((e) => e.id == itemId);
       },
       builder: (context, drink) {
+        if (drink == null) {
+          return const SizedBox.shrink();
+        }
         return ItemCartWidget(
           key: ValueKey(drink.id),
           drink: drink,

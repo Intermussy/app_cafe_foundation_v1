@@ -7,10 +7,7 @@ import 'package:app_foundation/features/store_menu/models/topping.dart';
 import 'package:app_foundation/features/store_menu/repositories/addon_repository.dart';
 import 'package:app_foundation/features/store_menu/repositories/cart_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
-import 'package:rxdart/rxdart.dart';
 
 part 'drink_event.dart';
 part 'drink_state.dart';

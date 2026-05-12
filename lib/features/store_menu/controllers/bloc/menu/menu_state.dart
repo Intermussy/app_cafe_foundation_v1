@@ -29,8 +29,8 @@ class MenuLoaded extends MenuState {
     return MenuLoaded(
       allDrinks: allDrinks ?? this.allDrinks,
       filteredDrinks: filteredDrinks ?? this.filteredDrinks,
-      selectedType: filter ?? this.selectedType,
-      searchQuery: search ?? this.searchQuery,
+      selectedType: filter ?? selectedType,
+      searchQuery: search ?? searchQuery,
       cartCount: cartCount ?? this.cartCount,
     );
   }

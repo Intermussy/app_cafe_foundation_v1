@@ -11,14 +11,14 @@ extension FromCartX on FromCart {
       basePrice: drink.basePrice,
       quantity: drink.quantity,
       type: drink.type,
-      temp: drink.tempLevel,
-      ice: drink.iceLevel,
-      sugar: drink.sugarLevel,
+      tempLevel: drink.tempLevel,
+      iceLevel: drink.iceLevel,
+      sugarLevel: drink.sugarLevel,
       toppings: (drink.toppings),
       syrups: (drink.syrups),
-      canBeHot: drink.canBeHot,
-      canBeCold: drink.canBeCold,
-      id: drink.catalogId,
+      hotAvailable: drink.hotAvailable,
+      iceAvailable: drink.iceAvailable,
+      catalogId: drink.catalogId,
       cartId: drink.id,
     );
   }
@@ -28,18 +28,18 @@ extension FromMenuX on FromMenu {
   DrinkDetailModel toDetailModel() {
     final drink = menuDrink;
     return DrinkDetailModel(
-      id: drink.id,
+      catalogId: drink.id,
       name: drink.name,
       image: drink.image,
-      basePrice: drink.price,
+      basePrice: drink.basePrice,
       quantity: 1,
-      temp: drink.hotAvailable ? 'hot' : 'cold',
-      ice: drink.iceAvailable ? 'normal' : 'none',
-      sugar: 'normal',
+      tempLevel: drink.hotAvailable ? 'hot' : 'cold',
+      iceLevel: drink.iceAvailable ? 'normal' : 'none',
+      sugarLevel: 'normal',
       toppings: [],
       syrups: [],
-      canBeHot: drink.hotAvailable,
-      canBeCold: drink.iceAvailable,
+      hotAvailable: drink.hotAvailable,
+      iceAvailable: drink.iceAvailable,
       type: drink.type,
     );
   }
