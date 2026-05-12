@@ -92,7 +92,7 @@ class DrinkCatalogModel extends DrinkBaseModel {
 
     result.addAll({'id': id});
     result.addAll({'name': name});
-    result.addAll({'basePrice': basePrice});
+    result.addAll({'price': basePrice});
     result.addAll({'image': image});
     result.addAll({'iceAvailable': iceAvailable});
     result.addAll({'hotAvailable': hotAvailable});
@@ -106,7 +106,7 @@ class DrinkCatalogModel extends DrinkBaseModel {
     return DrinkCatalogModel(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
-      basePrice: map['basePrice']?.toInt() ?? 0,
+      basePrice: map['price']?.toInt() ?? 0,
       image: map['image'] ?? '',
       iceAvailable: map['ice_available'] ?? false,
       hotAvailable: map['hot_available'] ?? false,
@@ -181,7 +181,7 @@ class DrinkCatalogDB {
 
     result.addAll({'id': id});
     result.addAll({'name': name});
-    result.addAll({'basePrice': basePrice});
+    result.addAll({'price': basePrice});
     result.addAll({'image': image});
     result.addAll({'ice_available': ice_available});
     result.addAll({'hot_available': hot_available});
@@ -195,7 +195,7 @@ class DrinkCatalogDB {
     return DrinkCatalogDB(
       id: map['id']?.toInt() ?? 0,
       name: map['name'] ?? '',
-      basePrice: map['basePrice']?.toInt() ?? 0,
+      basePrice: map['price']?.toInt() ?? 0,
       image: map['image'] ?? '',
       ice_available: map['ice_available']?.toInt() ?? 0,
       hot_available: map['hot_available']?.toInt() ?? 0,
