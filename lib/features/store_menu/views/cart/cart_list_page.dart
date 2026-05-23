@@ -138,7 +138,7 @@ class _CartListPageState extends State<CartListPage> {
               }
             },
             buildWhen: (previous, current) {
-              return current is CartLoaded;
+              return previous is CartLoading;
             },
             builder: (context, state) {
               switch (state) {

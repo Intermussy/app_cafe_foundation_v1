@@ -13,10 +13,10 @@ class CartRepository {
     try {
       await db.transaction((txt) async {
         //TODO: update to table 'cart_drinks'
-        final drinkDb = DrinkCartDB.fromMemory(drink: drink);
+        final drinkDb = drink.toDB();
         await txt.insert(
           'cart_drinks', //table name
-          drinkDb.toMap(), //object as map
+          drinkDb, //object as map
           conflictAlgorithm:
               ConflictAlgorithm.replace, //if id exist, just replace
         );
@@ -125,7 +125,7 @@ class CartRepository {
       final hydratedAttempt = <DrinkCartModel>[];
 
       for (final row in cartRows) {
-        final drink = DrinkCartDB.fromMap(row);
+        final drink = DrinkCartModel.fromDB(row);
 
         final toppingIds = toppingJoins
             .where((t) => t['cart_drink_id'] == drink.id)
@@ -147,7 +147,7 @@ class CartRepository {
           '[CART REPO] syrups list: ${syrups.map((s) => s.toMap())}',
         );
 
-        hydratedAttempt.add(DrinkCartModel.fromDB(toppings, syrups, drink));
+        hydratedAttempt.add(drink.copyWith(toppings: toppings, syrups: syrups));
       }
 
       hydrated = List<DrinkCartModel>.unmodifiable(hydratedAttempt);

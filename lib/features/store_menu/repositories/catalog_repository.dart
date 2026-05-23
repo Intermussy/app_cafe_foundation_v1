@@ -8,7 +8,7 @@ import 'package:app_foundation/features/store_menu/models/drink_catalog_model.da
 import 'package:app_foundation/features/store_menu/repositories/database_provider.dart';
 
 class CatalogRepository {
-  AppLogger _appLogger = AppLogger();
+  final AppLogger _appLogger = AppLogger();
 
   Future<List<DrinkCatalogModel>> readAll() async {
     final db = await DatabaseProvider.database;
@@ -17,9 +17,11 @@ class CatalogRepository {
       if (query.isNotEmpty) {
         _appLogger.info('[CATALOG REPOSITORY] cache detected.');
         final List<DrinkCatalogModel> result = query.map((d) {
-          final DrinkCatalogDB drinkDB = DrinkCatalogDB.fromMap(d);
-          _appLogger.debug('[DrinkCatalogDB.fromMap] ${drinkDB.toMap()}');
-          return DrinkCatalogModel.fromDB(drinkDB);
+          final drinkCatalog = DrinkCatalogModel.fromDB(d);
+          _appLogger.debug(
+            '[DrinkCatalogModel.fromDB] ${drinkCatalog.toMap()}',
+          );
+          return drinkCatalog;
         }).toList();
 
         return result;
@@ -31,7 +33,7 @@ class CatalogRepository {
       final batch = db.batch();
       for (final item in networkData) {
         _appLogger.debug('[NETWORK RESULT] ${item.toMap()}');
-        final mapDBModel = DrinkCatalogDB.fromMemory(item).toMap();
+        final mapDBModel = item.toDB();
         batch.insert('catalog_cache', mapDBModel);
       }
       await batch.commit(noResult: true);

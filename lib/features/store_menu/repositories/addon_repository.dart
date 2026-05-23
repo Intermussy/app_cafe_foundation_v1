@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'package:app_foundation/bindings/app_config.dart';
+import 'package:app_foundation/bindings/app_logger.dart';
 import 'package:app_foundation/bindings/http_interceptor.dart';
 import 'package:app_foundation/features/store_menu/models/syrup.dart';
 import 'package:app_foundation/features/store_menu/models/topping.dart';
@@ -76,15 +77,31 @@ class AddonNetwork {
       dev.log(
         '[HTTP ${resTopping.statusCode} ${resSyrup.statusCode}] fetch Toppings & syrups',
       );
+
+      //TODO: Decode Json to List
       final decodedTopping = jsonDecode(resTopping.body) as List<dynamic>;
       final decodedSyrup = jsonDecode(resSyrup.body) as List<dynamic>;
+      AppLogger().info(
+        "[Decode Toppings] ${decodedTopping.map((t) => t.toString())}",
+      );
 
+      AppLogger().info(
+        "[Decode Syrups] ${decodedSyrup.map((t) => t.toString())}",
+      );
+
+      //TODO: List<Map> to List<Topping> & List<Syrup>
       final mappedTopping = decodedTopping.map((t) {
         return Topping.fromMap(t as Map<String, dynamic>);
       }).toList();
+
+      AppLogger().info(
+        "[Map Toppings] ${mappedTopping.map((t) => t.toString())}",
+      );
       final mappedSyrup = decodedSyrup.map((s) {
         return Syrup.fromMap(s as Map<String, dynamic>);
       }).toList();
+      AppLogger().info("[Map Syrups] ${mappedSyrup.map((t) => t.toString())}");
+
       return (mappedTopping, mappedSyrup);
     } else {
       dev.log(

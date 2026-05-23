@@ -2,6 +2,7 @@ import 'package:app_foundation/bindings/rupiah_formatter.dart';
 import 'package:app_foundation/features/store_menu/controllers/bloc/cart/cart_bloc.dart';
 import 'package:app_foundation/features/store_menu/models/drink_cart_model.dart';
 import 'package:app_foundation/features/store_menu/models/adapters/drink_source.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,7 @@ class CartItemSelector extends StatelessWidget {
           return null;
         }
 
-        return state.cart.firstWhere((e) => e.id == itemId);
+        return state.cart.firstWhereOrNull((e) => e.id == itemId);
       },
       builder: (context, drink) {
         if (drink == null) {
