@@ -81,8 +81,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     final current = state as MenuLoaded;
     emit(MenuLoading());
     final filtered = current.allDrinks.where((d) {
-      final matchesType = event.type == 'all';
-      d.type == event.type;
+      final matchesType = event.type == 'all' || d.type == event.type;
+
       final matchesSearch = d.name.toLowerCase().contains(
         current.searchQuery.toLowerCase(),
       );

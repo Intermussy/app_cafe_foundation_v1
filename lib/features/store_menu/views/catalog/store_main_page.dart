@@ -172,6 +172,7 @@ class _StoreMainMenuState extends State<StoreMainMenu>
                             _menuBloc.add(
                               MenuFilterTypeEvent(type: 'non-coffee'),
                             );
+                            break;
                           default:
                             _menuBloc.add(MenuFilterTypeEvent(type: 'all'));
                         }
